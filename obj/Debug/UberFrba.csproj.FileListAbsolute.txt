@@ -1,2 +1,0 @@
-E:\src\UberFrba\UberFrba\bin\Debug\UberFrba.exe.config
-C:\Users\gasto\Desktop\Aplicacion Desktop\UberFrba\bin\Debug\UberFrba.exe.config
