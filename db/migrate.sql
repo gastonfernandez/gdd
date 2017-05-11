@@ -15,103 +15,103 @@ GO
 
 
 CREATE TABLE OSNR.Marca (
-	marca_id int IDENTITY(1,1) PRIMARY KEY,
-	marca_nombre nvarchar(255) NOT NULL,
+	mar_id int IDENTITY(1,1) PRIMARY KEY,
+	mar_nombre nvarchar(255) NOT NULL,
 	)
 GO
 
 CREATE TABLE OSNR.Modelo (
-	modelo_id int IDENTITY(1,1) PRIMARY KEY,
-	modelo_nombre nvarchar(255) NOT NULL,
-	modelo_id_marca int REFERENCES OSNR.Marca NOT NULL
+	mod_id int IDENTITY(1,1) PRIMARY KEY,
+	mod_nombre nvarchar(255) NOT NULL,
+	mod_id_marca int REFERENCES OSNR.Marca NOT NULL
 	)
 GO
 
 CREATE TABLE OSNR.Turno (
-	turno_id int IDENTITY(1,1) PRIMARY KEY,
-	turno_descripcion nvarchar(255) NOT NULL,
-	turno_hora_inicio time NOT NULL,
-	turno_hora_fin time NOT NULL,
-	turno_valor_km numeric(18,2) NOT NULL,
-	turno_precio_base numeric(18,2) NOT NULL,
-	turno_habilitado bit DEFAULT 1
+	tur_id int IDENTITY(1,1) PRIMARY KEY,
+	tur_descripcion nvarchar(255) NOT NULL,
+	tur_hora_inicio time NOT NULL,
+	tur_hora_fin time NOT NULL,
+	tur_valor_km numeric(18,2) NOT NULL,
+	tur_precio_base numeric(18,2) NOT NULL,
+	tur_habilitado bit NOT NULL DEFAULT 1
 	)
 GO
 
 CREATE TABLE OSNR.Usuario (
-	usuario_id int IDENTITY(1,1) PRIMARY KEY,
-	usuario_dni numeric(18, 0) NOT NULL,
-	usuario_nombre nvarchar(255) NOT NULL,
-	usuario_apellido nvarchar(255) NOT NULL,
-	ususario_direccion nvarchar(255) NOT NULL,
-	ususario_telefono numeric(18, 0) NOT NULL,
-	ususario_mail nvarchar(255),
-	ususario_fecha_nacimiento datetime NOT NULL,
+	usu_id int IDENTITY(1,1) PRIMARY KEY,
+	usu_dni numeric(18, 0) NOT NULL,
+	usu_nombre nvarchar(255) NOT NULL,
+	usu_apellido nvarchar(255) NOT NULL,
+	usu_direccion nvarchar(255) NOT NULL,
+	usu_telefono numeric(18, 0) NOT NULL,
+	usu_mail nvarchar(255) NOT NULL,
+	usu_fecha_nacimiento datetime NOT NULL,
 
 	/* Esto es propio del Usuario de login y no de la persona */
-	usuario_login nvarchar(255) UNIQUE,
-	usuario_password varbinary(255) NOT NULL,
-	usuario_cantidad_intentos smallint DEFAULT 0 NOT NULL,
-	usuario_habilitado bit NOT NULL DEFAULT 1
+	usu_login nvarchar(255) UNIQUE,
+	usu_password varbinary(255) NOT NULL,
+	usu_cantidad_intentos smallint DEFAULT 0 NOT NULL,
+	usu_habilitado bit NOT NULL DEFAULT 1
 	)
 GO
 
 CREATE TABLE OSNR.Chofer (
-	chofer_id int IDENTITY(1,1) PRIMARY KEY,
-	chofer_id_usuario int REFERENCES OSNR.Usuario NOT NULL,
-	chofer_id_turno int REFERENCES OSNR.Turno NOT NULL
+	cho_id int IDENTITY(1,1) PRIMARY KEY,
+	cho_id_usuario int REFERENCES OSNR.Usuario NOT NULL,
+	cho_id_turno int REFERENCES OSNR.Turno NOT NULL
 	)
 GO
 
 CREATE TABLE OSNR.Cliente (
-	cliente_id int IDENTITY(1,1) PRIMARY KEY,
-	liente_id_usuario int REFERENCES OSNR.Usuario NOT NULL
+	cli_id int IDENTITY(1,1) PRIMARY KEY,
+	cli_id_usuario int REFERENCES OSNR.Usuario NOT NULL
 	)
 GO
 
 CREATE TABLE OSNR.Auto (
-	auto_id int IDENTITY(1,1) PRIMARY KEY,
-	auto_id_modelo int REFERENCES OSNR.Modelo NOT NULL,
-	auto_patente nvarchar(255) NOT NULL,
-	auto_licencia nvarchar(255) NOT NULL,
-	auto_rodado nvarchar(255) NOT NULL,
-	auto_habilitado bit DEFAULT 1,
-	auto_id_chofer int REFERENCES OSNR.Chofer NOT NULL
+	aut_id int IDENTITY(1,1) PRIMARY KEY,
+	aut_id_modelo int REFERENCES OSNR.Modelo NOT NULL,
+	aut_patente nvarchar(255) NOT NULL,
+	aut_licencia nvarchar(255) NOT NULL,
+	aut_rodado nvarchar(255) NOT NULL,
+	aut_habilitado bit NOT NULL DEFAULT 1,
+	aut_id_chofer int REFERENCES OSNR.Chofer NOT NULL
 	)
 GO
 
 CREATE TABLE OSNR.Viaje (
-	viaje_id int IDENTITY(1,1) PRIMARY KEY,
-	viaje_cantidad_km int NOT NULL,
-	viaje_fecha datetime NOT NULL,
-	viaje_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
+	via_id int IDENTITY(1,1) PRIMARY KEY,
+	via_cantidad_km int NOT NULL,
+	via_fecha datetime NOT NULL,
+	via_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
 	)
 GO
 
 CREATE TABLE OSNR.Factura (
-	factura_id int IDENTITY(1,1) PRIMARY KEY,
-	factura_numero int NOT NULL,
-	factura_fecha datetime NOT NULL, /* TODO: CUANTAS FECHAS HAY?? */
-	factura_fecha_inicio datetime NOT NULL,
-	factura_fecha_fin datetime NOT NULL,
-	factura_importe numeric(18,2) NOT NULL,
-	factura_id_cliente int REFERENCES OSNR.Cliente
+	fac_id int IDENTITY(1,1) PRIMARY KEY,
+	fac_numero int NOT NULL,
+	fac_fecha datetime NOT NULL, /* TODO: CUANTAS FECHAS HAY?? */
+	fac_fecha_inicio datetime NOT NULL,
+	fac_fecha_fin datetime NOT NULL,
+	fac_importe numeric(18,2) NOT NULL,
+	fac_id_cliente int REFERENCES OSNR.Cliente NOT NULL
 	)
 GO
 
 CREATE TABLE OSNR.Rendicion (
-	rendicion_id int IDENTITY(1,1) PRIMARY KEY,
-	rendicion_numero int NOT NULL,
-	rendicion_fecha datetime NOT NULL, /* TODO: CUANTAS FECHAS HAY?? */
-	rendicion_importe numeric(18,2) NOT NULL,
-	factura_id_chofer int REFERENCES OSNR.Chofer
+	ren_id int IDENTITY(1,1) PRIMARY KEY,
+	ren_numero int NOT NULL,
+	ren_fecha datetime NOT NULL,
+	ren_importe numeric(18,2) NOT NULL,
+	ren_id_chofer int REFERENCES OSNR.Chofer NOT NULL
 	)
 GO
 
 
 CREATE TABLE OSNR.Funcionalidad (
-	funcionalidad_id int IDENTITY(1,1) PRIMARY KEY,
-	funcionalidad_nombre nvarchar(255) NOT NULL
+	fun_id int IDENTITY(1,1) PRIMARY KEY,
+	fun_nombre nvarchar(255) NOT NULL NOT NULL
 	)
 GO
 
