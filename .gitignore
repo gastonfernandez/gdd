@@ -195,6 +195,5 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
-resultado_migracion.txt
-resultado_borrar.txt
-resultado_borrar_all.txt
+result_migrate.txt
+result_drop.txt
