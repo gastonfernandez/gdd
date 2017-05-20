@@ -58,8 +58,7 @@ GO
 
 CREATE TABLE OSNR.Chofer (
 	cho_id int IDENTITY(1,1) PRIMARY KEY,
-	cho_id_usuario int REFERENCES OSNR.Usuario NOT NULL,
-	cho_id_turno int REFERENCES OSNR.Turno NOT NULL
+	cho_id_usuario int REFERENCES OSNR.Usuario NOT NULL
 	)
 GO
 
@@ -80,11 +79,20 @@ CREATE TABLE OSNR.Auto (
 	)
 GO
 
+CREATE TABLE OSNR.AutoTurno (
+	auttur_id_auto int REFERENCES OSNR.Auto NOT NULL,
+	auttur_id_turno int REFERENCES OSNR.Turno NOT NULL,
+	PRIMARY KEY(auttur_id_auto, auttur_id_turno)
+	)
+GO
+
 CREATE TABLE OSNR.Viaje (
 	via_id int IDENTITY(1,1) PRIMARY KEY,
 	via_cantidad_km int NOT NULL,
 	via_fecha datetime NOT NULL,
 	via_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
+	via_id_cliente int REFERENCES OSNR.Cliente NOT NULL,
+	via_id_auto int REFERENCES OSNR.Auto NOT NULL
 	)
 GO
 
