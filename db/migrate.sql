@@ -115,6 +115,11 @@ CREATE TABLE OSNR.Factura (
 	)
 GO
 
+CREATE TABLE OSNR.FacturaViaje (
+	facvia_id_factura int REFERENCES OSNR.Factura NOT NULL,
+	facvia_id_viaje int REFERENCES OSNR.Viaje NOT NULL,
+	PRIMARY KEY(facvia_id_factura, facvia_id_viaje)
+)
 
 CREATE TABLE OSNR.Funcionalidad (
 	fun_id int IDENTITY(1,1) PRIMARY KEY,
