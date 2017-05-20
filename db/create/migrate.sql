@@ -43,10 +43,10 @@ CREATE TABLE OSNR.Usuario (
 	usu_dni numeric(18, 0) UNIQUE NOT NULL,
 	usu_nombre nvarchar(255) NOT NULL,
 	usu_apellido nvarchar(255) NOT NULL,
-	usu_direccion nvarchar(255) NOT NULL,
-	usu_telefono numeric(18, 0) NOT NULL,
-	usu_mail nvarchar(255) NOT NULL,
-	usu_fecha_nacimiento datetime NOT NULL,
+	usu_direccion nvarchar(255),
+	usu_telefono numeric(18, 0),
+	usu_mail nvarchar(255),
+	usu_fecha_nacimiento datetime,
 
 	/* Esto es propio del Usuario de login y no de la persona */
 	usu_login nvarchar(255) UNIQUE NOT NULL,
@@ -135,30 +135,12 @@ CREATE TABLE OSNR.Funcionalidad (
 	)
 GO
 
-/* CREAER LAS FUNCIONALIDADES DEFAULT...
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('ABM Rol')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('ABM Ruta Aerea')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('ABM Aeronave')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Generar Viaje')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Registrar Llegada')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Compra Pasaje/Encomienda') --cliente
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Cancelacion Pasaje/Encomienda')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Consultar Millas') --cliente
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Canjear Millas') --cliente
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Listados Estadisticos')
-GO
-*/
-
 CREATE TABLE OSNR.Rol (
 	rol_id int IDENTITY(1,1) PRIMARY KEY,
 	rol_nombre nvarchar(255) UNIQUE NOT NULL,
 	rol_habilitado bit DEFAULT 1 NOT NULL
 	)
 GO
-
-INSERT INTO OSNR.Rol (rol_nombre) values ('Administrador')
-INSERT INTO OSNR.Rol (rol_nombre) values ('Cliente')
-INSERT INTO OSNR.Rol (rol_nombre) values ('Chofer')
 
 CREATE TABLE OSNR.FuncionalidadRol (
 	funcrol_id_rol int REFERENCES OSNR.Rol NOT NULL,
@@ -167,7 +149,26 @@ CREATE TABLE OSNR.FuncionalidadRol (
 	)
 GO
 
-/* ASIGNAR FUNCIONALIDADES A CADA ROL..
+CREATE TABLE OSNR.UsuarioRol (
+	usurol_id_usuario int REFERENCES OSNR.Usuario NOT NULL,
+	usurol_id_rol int REFERENCES OSNR.Rol NOT NULL,
+	PRIMARY KEY(usurol_id_usuario, usurol_id_rol)
+	)
+GO
+
+/* Creamos los roles, y un usuario admin por default.. */
+INSERT INTO OSNR.Rol (rol_nombre) values ('Administrador')	/* ID 1 */
+INSERT INTO OSNR.Rol (rol_nombre) values ('Cliente')		/* ID 2 */
+INSERT INTO OSNR.Rol (rol_nombre) values ('Chofer')			/* ID 3 */
+
+INSERT INTO OSNR.Usuario (usu_nombre, usu_apellido, usu_dni, usu_login, usu_password)
+	values ('Administrador', 'OSNR', '11111', 'admin', HASHBYTES('SHA2_256', 'w23e'))
+GO
+INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
+	values(1, 1)
+GO
+
+/* TODO: ASIGNAR FUNCIONALIDADES A CADA ROL..
 INSERT INTO OSNR.FuncionalidadRol values (1,1)
 INSERT INTO OSNR.FuncionalidadRol values (1,2)
 INSERT INTO OSNR.FuncionalidadRol values (1,3)
@@ -183,28 +184,17 @@ INSERT INTO OSNR.FuncionalidadRol values (2,6)
 INSERT INTO OSNR.FuncionalidadRol values (2,8)
 INSERT INTO OSNR.FuncionalidadRol values (2,9)
 GO
-*/
 
-/*
-INSERT INTO OSNR.Usuario (nombre_usuario, password)
-	values ('Juan', HASHBYTES('SHA2_256', 'w23e'))
-INSERT INTO OSNR.Usuario (nombre_usuario, password)
-	values ('admin', HASHBYTES('SHA2_256', 'w23e'))
-GO
-*/
-
-CREATE TABLE OSNR.UsuarioRol (
-	usurol_id_usuario int REFERENCES OSNR.Usuario NOT NULL,
-	usurol_id_rol int REFERENCES OSNR.Rol NOT NULL,
-	PRIMARY KEY(usurol_id_usuario, usurol_id_rol)
-	)
-GO
-
-/* AGREGAR ROLES A LOS USUARIOS POR DEFAULT..
-INSERT INTO OSNR.RolPorUsuario(id_rol, nombre_usuario)
-	values(1, 1)
-INSERT INTO OSNR.RolPorUsuario(id_rol, nombre_usuario)
-	values(1, 2)
+INSERT INTO OSNR.Funcionalidad (descripcion) values ('ABM Rol')
+INSERT INTO OSNR.Funcionalidad (descripcion) values ('ABM Ruta Aerea')
+INSERT INTO OSNR.Funcionalidad (descripcion) values ('ABM Aeronave')
+INSERT INTO OSNR.Funcionalidad (descripcion) values ('Generar Viaje')
+INSERT INTO OSNR.Funcionalidad (descripcion) values ('Registrar Llegada')
+INSERT INTO OSNR.Funcionalidad (descripcion) values ('Compra Pasaje/Encomienda') --cliente
+INSERT INTO OSNR.Funcionalidad (descripcion) values ('Cancelacion Pasaje/Encomienda')
+INSERT INTO OSNR.Funcionalidad (descripcion) values ('Consultar Millas') --cliente
+INSERT INTO OSNR.Funcionalidad (descripcion) values ('Canjear Millas') --cliente
+INSERT INTO OSNR.Funcionalidad (descripcion) values ('Listados Estadisticos')
 GO
 */
 
@@ -232,7 +222,7 @@ GO
 /* Tomamos como usuario el nombre+apellido y como password su nombre */
 INSERT INTO OSNR.Usuario
 	SELECT DISTINCT
-		Chofer_Dni
+		Chofer_Dni,
 		Chofer_Nombre,
 		Chofer_Apellido,
 		Chofer_Direccion,
@@ -240,7 +230,7 @@ INSERT INTO OSNR.Usuario
 		Chofer_Mail,
 		Chofer_Fecha_Nac,
 		Chofer_Nombre + Chofer_Apellido,
-		HashBytes('SHA2_256',convert(varchar(255), Chofer_Nombre)),
+		HASHBYTES('SHA2_256', Chofer_Nombre),
 		0, /* Intentos login */
 		1  /* Habilitado */
 	FROM gd_esquema.Maestra
@@ -256,7 +246,7 @@ INSERT INTO OSNR.Usuario
 		Cliente_Mail,
 		Cliente_Fecha_Nac,
 		Cliente_Nombre + Cliente_Apellido,
-		HashBytes('SHA2_256',convert(varchar(255), Cliente_Nombre)),
+		HASHBYTES('SHA2_256', Cliente_Nombre),
 		0, /* Intentos login */
 		1  /* Habilitado */
 	FROM gd_esquema.Maestra
