@@ -34,7 +34,7 @@ CREATE TABLE OSNR.Turno (
 	tur_hora_fin time NOT NULL,
 	tur_valor_km numeric(18,2) NOT NULL,
 	tur_precio_base numeric(18,2) NOT NULL,
-	tur_habilitado bit NOT NULL DEFAULT 1
+	tur_habilitado bit DEFAULT 1 NOT NULL
 	)
 GO
 
@@ -49,10 +49,10 @@ CREATE TABLE OSNR.Usuario (
 	usu_fecha_nacimiento datetime NOT NULL,
 
 	/* Esto es propio del Usuario de login y no de la persona */
-	usu_login nvarchar(255) UNIQUE,
+	usu_login nvarchar(255) UNIQUE NOT NULL,
 	usu_password varbinary(255) NOT NULL,
 	usu_cantidad_intentos smallint DEFAULT 0 NOT NULL,
-	usu_habilitado bit NOT NULL DEFAULT 1
+	usu_habilitado bit DEFAULT 1 NOT NULL
 	)
 GO
 
@@ -75,7 +75,7 @@ CREATE TABLE OSNR.Auto (
 	aut_patente nvarchar(255) NOT NULL,
 	aut_licencia nvarchar(255) NOT NULL,
 	aut_rodado nvarchar(255) NOT NULL,
-	aut_habilitado bit NOT NULL DEFAULT 1,
+	aut_habilitado bit DEFAULT 1 NOT NULL,
 	aut_id_chofer int REFERENCES OSNR.Chofer NOT NULL
 	)
 GO
@@ -88,6 +88,22 @@ CREATE TABLE OSNR.Viaje (
 	)
 GO
 
+CREATE TABLE OSNR.Rendicion (
+	ren_id int IDENTITY(1,1) PRIMARY KEY,
+	ren_numero int NOT NULL,
+	ren_fecha datetime NOT NULL,
+	ren_importe numeric(18,2) NOT NULL,
+	ren_id_chofer int REFERENCES OSNR.Chofer NOT NULL
+	)
+GO
+
+CREATE TABLE OSNR.RendicionViaje (
+	renvia_id_rendicion int REFERENCES OSNR.Rendicion NOT NULL,
+	renvia_id_viaje int REFERENCES OSNR.Viaje NOT NULL,
+	renvia_porcentaje numeric(18,2) NOT NULL,
+	PRIMARY KEY(renvia_id_rendicion, renvia_id_viaje)
+)
+
 CREATE TABLE OSNR.Factura (
 	fac_id int IDENTITY(1,1) PRIMARY KEY,
 	fac_numero int NOT NULL,
@@ -99,19 +115,10 @@ CREATE TABLE OSNR.Factura (
 	)
 GO
 
-CREATE TABLE OSNR.Rendicion (
-	ren_id int IDENTITY(1,1) PRIMARY KEY,
-	ren_numero int NOT NULL,
-	ren_fecha datetime NOT NULL,
-	ren_importe numeric(18,2) NOT NULL,
-	ren_id_chofer int REFERENCES OSNR.Chofer NOT NULL
-	)
-GO
-
 
 CREATE TABLE OSNR.Funcionalidad (
 	fun_id int IDENTITY(1,1) PRIMARY KEY,
-	fun_nombre nvarchar(255) NOT NULL NOT NULL
+	fun_nombre nvarchar(255) NOT NULL
 	)
 GO
 
@@ -132,7 +139,7 @@ GO
 CREATE TABLE OSNR.Rol (
 	rol_id int IDENTITY(1,1) PRIMARY KEY,
 	rol_nombre nvarchar(255) UNIQUE NOT NULL,
-	rol_habilitado bit NOT NULL DEFAULT 1
+	rol_habilitado bit DEFAULT 1 NOT NULL
 	)
 GO
 
@@ -141,8 +148,8 @@ INSERT INTO OSNR.Rol (rol_nombre) values ('Cliente')
 INSERT INTO OSNR.Rol (rol_nombre) values ('Chofer')
 
 CREATE TABLE OSNR.FuncionalidadRol (
-	funcrol_id_rol int REFERENCES OSNR.Rol,
-	funcrol_id_funcionalidad int REFERENCES OSNR.Funcionalidad,
+	funcrol_id_rol int REFERENCES OSNR.Rol NOT NULL,
+	funcrol_id_funcionalidad int REFERENCES OSNR.Funcionalidad NOT NULL,
 	PRIMARY KEY(funcrol_id_rol, funcrol_id_funcionalidad)
 	)
 GO
@@ -174,8 +181,8 @@ GO
 */
 
 CREATE TABLE OSNR.UsuarioRol (
-	usurol_id_usuario int REFERENCES OSNR.Usuario,
-	usurol_id_rol int REFERENCES OSNR.Rol,
+	usurol_id_usuario int REFERENCES OSNR.Usuario NOT NULL,
+	usurol_id_rol int REFERENCES OSNR.Rol NOT NULL,
 	PRIMARY KEY(usurol_id_usuario, usurol_id_rol)
 	)
 GO
