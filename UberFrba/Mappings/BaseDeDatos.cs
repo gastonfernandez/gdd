@@ -20,8 +20,8 @@ namespace UberFrba.Mappings
 
         }
 
-        private SqlConnection conexion = new SqlConnection("Data Source=GASTON\\SQLSERVER2012;" + "Initial Catalog=GD2C2015;" + "Integrated Security=true;"
-                + "UID=gd" + "PWD=gd2015");
+        private SqlConnection conexion = new SqlConnection("Data Source=DESKTOP-OT9E6ED\\SQLSERVER2012;" + "Initial Catalog=GD1C2017;" + "Integrated Security=true;"
+                + "UID=gd" + "PWD=gd2017");
 
 
         public void openConnection()

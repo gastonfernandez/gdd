@@ -18,23 +18,12 @@ namespace UberFrba.Pagina_Principal
             InitializeComponent();
         }
 
-        private void Ingresar_click(object sender, EventArgs e)
-        {
-           
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void Ingresar_Click(object sender, EventArgs e)
         {
             // Llamo al Menú(comentario anterior)
-            MenuPpal frm = new Menu.MenuPpal();//Comentario actual: no entiendo que deberia hacer esto.
-            this.Hide();
-            frm.Show();
+            //MenuPpal frm = new Menu.MenuPpal();//Comentario actual: no entiendo que deberia hacer esto.
+            //this.Hide();
+            //frm.Show();
             /* el pass de prueba que use es AAAA para el usuario PEPE(comentario anterior)*/
 
             try
@@ -57,8 +46,22 @@ namespace UberFrba.Pagina_Principal
                     if (usu == null)
                         MessageBox.Show("La contraseña ingresada es incorrecta");
                     else
-                        MessageBox.Show("Se ha logueado correctamente"); /* aca hay que hacer lo que siga*/
+                    {
+                        usu.roles = Rol.recuperarRolPorUsuario(usu.Id);
 
+                        if (usu.roles.Count() > 1)
+                        {
+                            //abrir form con combo para elegir rol
+                        }
+                        else
+                        {
+                            usu.roles[0].seleccionado = true;
+                        }
+
+                        
+                        
+                        MessageBox.Show("Se ha logueado correctamente"); /* aca hay que hacer que vaya al menu principal*/
+                    }
 
                 }
 
@@ -78,6 +81,13 @@ namespace UberFrba.Pagina_Principal
             else
                 return true;
         }
+
+        private void textoUsuario_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+       
 
     }
 }

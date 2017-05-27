@@ -43,7 +43,6 @@
             this.labelUsuario.Size = new System.Drawing.Size(43, 13);
             this.labelUsuario.TabIndex = 0;
             this.labelUsuario.Text = "Usuario";
-            this.labelUsuario.Click += new System.EventHandler(this.label1_Click);
             // 
             // labelPassword
             // 
@@ -60,6 +59,7 @@
             this.textoUsuario.Name = "textoUsuario";
             this.textoUsuario.Size = new System.Drawing.Size(100, 20);
             this.textoUsuario.TabIndex = 2;
+            this.textoUsuario.TextChanged += new System.EventHandler(this.textoUsuario_TextChanged);
             // 
             // textoPassword
             // 
@@ -67,6 +67,7 @@
             this.textoPassword.Name = "textoPassword";
             this.textoPassword.Size = new System.Drawing.Size(100, 20);
             this.textoPassword.TabIndex = 3;
+            this.textoPassword.UseSystemPasswordChar = true;
             // 
             // Ingresar
             // 

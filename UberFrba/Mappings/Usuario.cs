@@ -19,11 +19,12 @@ namespace UberFrba.Mappings
         public String direccion;
         public String telefono;
         public String mail;
-        public DateTime fecNac;
+        public DateTime? fecNac;
         public String username = "";
         public String pass = "";
         public Int32 intentos;
         public Int32 habilitado;
+        public List<Rol> roles;
 
 
         public Usuario getUser(String login, String pass)
@@ -33,7 +34,7 @@ namespace UberFrba.Mappings
             #region ValidarUsuarioyPass Contra la base
             BaseDeDatos db = new BaseDeDatos();
 
-            DataTable dt = db.select_query("  select usu_id,usu_dni,usu_nombre,usu_apellido,usu_direccion ,usu_telefono,usu_mail,usu_fecha_nacimiento,usu_login,usu_password,usu_cantidad_intentos,usu_habilitado from [#GDD].USUARIO where username= '" + login + "'");
+            DataTable dt = db.select_query("  select usu_id,usu_dni,usu_nombre,usu_apellido,usu_direccion ,usu_telefono,usu_mail,usu_fecha_nacimiento,usu_login,convert(varchar(2000),usu_password,2) as usu_password,usu_cantidad_intentos,usu_habilitado from [OSNR].USUARIO where usu_login= '" + login + "'");
 
             if (dt.Rows.Count > 1)
             {
@@ -41,7 +42,7 @@ namespace UberFrba.Mappings
 
             }
             else
-            {
+             {
                 if (dt.Rows.Count == 0)
                 {
                     throw new Exception("El usuario ingresado es inexistente");
@@ -59,7 +60,8 @@ namespace UberFrba.Mappings
                         this.direccion = Convert.ToString(row["usu_direccion"]);
                         this.telefono = Convert.ToString(row["usu_telefono"]);
                         this.mail = Convert.ToString(row["usu_mail"]);
-                        this.fecNac = Convert.ToDateTime(row["usu_fecha_nacimiento"]);
+                         if (fecNac!= null) 
+                            this.fecNac = Convert.ToDateTime(row["usu_fecha_nacimiento"]);
                         this.username = Convert.ToString(row["usu_login"]);
                         this.pass = Convert.ToString(row["usu_password"]);
                         this.intentos = Convert.ToInt32(row["usu_cantidad_intentos"]);
@@ -77,7 +79,7 @@ namespace UberFrba.Mappings
             {
                 #region CompararValor Ingresado contra la base
                 String Msg = String.Empty;
-                if (this.pass == valorEncriptado)
+                if (this.pass == valorEncriptado.ToUpper())
                 {
                     Msg = "OK";
                     this.habilitado = 1;
@@ -94,7 +96,7 @@ namespace UberFrba.Mappings
                 #endregion
 
                 #region ModificarValor en base a lo procesado
-                string update = "update [#GDD].usuario " +
+                string update = "update [OSNR].usuario " +
                                  " set usu_cantidad_intentos= " + this.intentos + "," +
                                  "usu_habilitado= " + this.habilitado +
                                  " where usu_id= " + this.Id;
