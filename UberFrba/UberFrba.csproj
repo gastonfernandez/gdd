@@ -68,17 +68,24 @@
     <Compile Include="Abm Rol\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Mappings\Combo.cs" />
+    <Compile Include="EleccionRol.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EleccionRol.Designer.cs">
+      <DependentUpon>EleccionRol.cs</DependentUpon>
+    </Compile>
     <Compile Include="Facturacion\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Facturacion\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form1.cs">
+    <Compile Include="Login.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Login.Designer.cs">
+      <DependentUpon>Login.cs</DependentUpon>
     </Compile>
     <Compile Include="Listado Estadistico\Form1.cs">
       <SubType>Form</SubType>
@@ -109,6 +116,9 @@
     <Compile Include="Rendicion Viajes\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="EleccionRol.resx">
+      <DependentUpon>EleccionRol.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Pagina Principal\InicioSesion.resx">
       <DependentUpon>InicioSesion.cs</DependentUpon>
     </EmbeddedResource>

@@ -38,7 +38,7 @@
             // labelUsuario
             // 
             this.labelUsuario.AutoSize = true;
-            this.labelUsuario.Location = new System.Drawing.Point(208, 75);
+            this.labelUsuario.Location = new System.Drawing.Point(208, 48);
             this.labelUsuario.Name = "labelUsuario";
             this.labelUsuario.Size = new System.Drawing.Size(43, 13);
             this.labelUsuario.TabIndex = 0;
@@ -47,7 +47,7 @@
             // labelPassword
             // 
             this.labelPassword.AutoSize = true;
-            this.labelPassword.Location = new System.Drawing.Point(208, 126);
+            this.labelPassword.Location = new System.Drawing.Point(208, 90);
             this.labelPassword.Name = "labelPassword";
             this.labelPassword.Size = new System.Drawing.Size(53, 13);
             this.labelPassword.TabIndex = 1;
@@ -55,7 +55,7 @@
             // 
             // textoUsuario
             // 
-            this.textoUsuario.Location = new System.Drawing.Point(285, 72);
+            this.textoUsuario.Location = new System.Drawing.Point(285, 48);
             this.textoUsuario.Name = "textoUsuario";
             this.textoUsuario.Size = new System.Drawing.Size(100, 20);
             this.textoUsuario.TabIndex = 2;
@@ -63,7 +63,7 @@
             // 
             // textoPassword
             // 
-            this.textoPassword.Location = new System.Drawing.Point(285, 123);
+            this.textoPassword.Location = new System.Drawing.Point(285, 90);
             this.textoPassword.Name = "textoPassword";
             this.textoPassword.Size = new System.Drawing.Size(100, 20);
             this.textoPassword.TabIndex = 3;

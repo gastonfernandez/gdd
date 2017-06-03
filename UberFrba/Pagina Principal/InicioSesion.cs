@@ -51,16 +51,20 @@ namespace UberFrba.Pagina_Principal
 
                         if (usu.roles.Count() > 1)
                         {
-                            //abrir form con combo para elegir rol
+                            EleccionRol form = new EleccionRol();
+                            form.Show(usu);
+                            form.Enabled = true;
+                            this.Hide();
                         }
                         else
                         {
                             usu.roles[0].seleccionado = true;
+
+                            //Hay que llamar al menu principal con el usuario el rol que tiene es el que usa
                         }
 
                         
                         
-                        MessageBox.Show("Se ha logueado correctamente"); /* aca hay que hacer que vaya al menu principal*/
                     }
 
                 }
@@ -87,6 +91,7 @@ namespace UberFrba.Pagina_Principal
 
         }
 
+       
        
 
     }
