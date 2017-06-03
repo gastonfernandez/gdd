@@ -50,11 +50,23 @@
     <Compile Include="Abm Automovil\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Abm Chofer\EditarChofer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Chofer\EditarChofer.Designer.cs">
+      <DependentUpon>EditarChofer.cs</DependentUpon>
+    </Compile>
     <Compile Include="Abm Chofer\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Abm Chofer\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Abm Cliente\EditarCliente.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Abm Cliente\EditarCliente.Designer.cs">
+      <DependentUpon>EditarCliente.cs</DependentUpon>
     </Compile>
     <Compile Include="Abm Cliente\Form1.cs">
       <SubType>Form</SubType>
@@ -109,6 +121,18 @@
     <Compile Include="Rendicion Viajes\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Abm Chofer\EditarChofer.resx">
+      <DependentUpon>EditarChofer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Chofer\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Cliente\EditarCliente.resx">
+      <DependentUpon>EditarCliente.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Cliente\Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Pagina Principal\InicioSesion.resx">
       <DependentUpon>InicioSesion.cs</DependentUpon>
     </EmbeddedResource>
