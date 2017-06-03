@@ -10,34 +10,34 @@ using System.Windows.Forms;
 
 namespace UberFrba.Abm_Chofer
 {
-    public partial class Form1 : Form
+    public partial class EditarChofer : Form
     {
-        public Form1()
+        public EditarChofer()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void EditarChofer_Load(object sender, EventArgs e)
         {
 
         }
 
-        private void txtNombre_TextChanged(object sender, EventArgs e)
+        private void label6_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void lblNombre_Click(object sender, EventArgs e)
+        private void label7_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void lblApellido_Click(object sender, EventArgs e)
+        private void label10_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void txtApellido_TextChanged(object sender, EventArgs e)
+        private void label3_Click(object sender, EventArgs e)
         {
 
         }
