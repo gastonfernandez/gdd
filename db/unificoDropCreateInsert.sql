@@ -266,6 +266,11 @@ INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
 	values(1, 1)
 GO
 
+
+INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
+	values(1, 2)
+
+
 /* TODO: ASIGNAR FUNCIONALIDADES A CADA ROL..
 INSERT INTO OSNR.FuncionalidadRol values (1,1)
 INSERT INTO OSNR.FuncionalidadRol values (1,2)

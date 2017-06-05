@@ -91,6 +91,11 @@ namespace UberFrba.Pagina_Principal
 
         }
 
+        private void InicioSesion_Load(object sender, EventArgs e)
+        {
+
+        }
+
        
        
 

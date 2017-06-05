@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UberFrba.Pagina_Principal;
+using UberFrba.Abm_Rol;
 
 namespace UberFrba
 {
@@ -17,7 +18,7 @@ namespace UberFrba
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new InicioSesion());
+            Application.Run(new AbmRol());
         }
     }
 }

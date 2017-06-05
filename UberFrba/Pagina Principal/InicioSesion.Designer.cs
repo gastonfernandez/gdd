@@ -91,6 +91,7 @@
             this.Controls.Add(this.labelUsuario);
             this.Name = "InicioSesion";
             this.Text = "InicioSesion";
+            this.Load += new System.EventHandler(this.InicioSesion_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

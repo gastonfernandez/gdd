@@ -50,36 +50,19 @@
     <Compile Include="Abm Automovil\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Abm Chofer\EditarChofer.cs">
+    <Compile Include="Abm Rol\AbmRol.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Abm Chofer\EditarChofer.Designer.cs">
-      <DependentUpon>EditarChofer.cs</DependentUpon>
+    <Compile Include="Abm Rol\AbmRol.Designer.cs">
+      <DependentUpon>AbmRol.cs</DependentUpon>
     </Compile>
-    <Compile Include="Abm Chofer\Form1.cs">
+    <Compile Include="Abm Rol\EditarRol.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Abm Chofer\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Abm Rol\EditarRol.Designer.cs">
+      <DependentUpon>EditarRol.cs</DependentUpon>
     </Compile>
-    <Compile Include="Abm Cliente\EditarCliente.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Abm Cliente\EditarCliente.Designer.cs">
-      <DependentUpon>EditarCliente.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Abm Cliente\Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Abm Cliente\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Abm Rol\Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Abm Rol\Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Mappings\BaseDeDatos.cs" />
     <Compile Include="Mappings\Combo.cs" />
     <Compile Include="EleccionRol.cs">
       <SubType>Form</SubType>
@@ -105,7 +88,7 @@
     <Compile Include="Listado Estadistico\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Mappings\BaseDeDatos.cs" />
+    <Compile Include="Mappings\Funcionalidad.cs" />
     <Compile Include="Mappings\Rol.cs" />
     <Compile Include="Mappings\Usuario.cs" />
     <Compile Include="Pagina Principal\InicioSesion.cs">
@@ -131,6 +114,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Abm Rol\AbmRol.resx">
+      <DependentUpon>AbmRol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Abm Rol\EditarRol.resx">
+      <DependentUpon>EditarRol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pagina Principal\InicioSesion.resx">
+      <DependentUpon>InicioSesion.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
