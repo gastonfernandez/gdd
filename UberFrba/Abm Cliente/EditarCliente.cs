@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -21,21 +21,7 @@ namespace UberFrba.Abm_Cliente
         public FormEditarCliente()
         {
             InitializeComponent();
-            conexion = new SqlConnection(@Configuraciones.datosConexion);
-            conexion.Open();
-
-            String query = "SELECT Plan_Codigo, Plan_Descripcion FROM CHAMBA.Planes";
-
-            SqlCommand listar = new SqlCommand(query, conexion);
-
-            DataTable tabla = new DataTable();
-            SqlDataAdapter adapter = new SqlDataAdapter();
-            adapter.SelectCommand = listar;
-            adapter.Fill(tabla);
-
-            conexion.Close();
-
-            dtpNacimiento.Value = Configuraciones.fecha;
+            //dtpNacimiento.Value = Configuraciones.fecha;
         }
 
         public void cargarDatos(decimal numeroCliente)
@@ -62,8 +48,14 @@ namespace UberFrba.Abm_Cliente
             txtNombre.Text = tabla.Rows[0]["usu_nombre"].ToString();
             txtApellido.Text = tabla.Rows[0]["usu_apellido"].ToString();
             txtDocumento.Text = tabla.Rows[0]["usu_dni"].ToString();
-            txtCalle.Text = tabla.Rows[0]["usu_direccion"].ToString();
-
+            
+            // FALTA ESTO
+            //txtCalle.Text = tabla.Rows[0]["usu_direccion"].ToString();
+            //txtPiso.Text = tabla.Rows[0]["usu_direccion"].ToString();
+            //txtDepartamento = tabla.Rows[0]["usu_direccion"].ToString();
+            //TxtLocalidad = tabla.Rows[0]["usu_direccion"].ToString();
+            //TxtCodigoPostal = = tabla.Rows[0]["usu_direccion"].ToString();
+            
             txtTelefono.Text = tabla.Rows[0]["usu_telefono"].ToString();
             txtEmail.Text = tabla.Rows[0]["usu_mail"].ToString();
             dtpNacimiento.Text = tabla.Rows[0]["usua_fecha_nacimiento"].ToString();
@@ -75,23 +67,14 @@ namespace UberFrba.Abm_Cliente
         {
             if (camposCompletos())
             {
-
                 if (existeEmail())
                 {
                     MessageBox.Show("El email ya se encuentra en uso por otro usuario");
                 }
                 else
                 {
-
                     this.DialogResult = DialogResult.OK;
-                    if (this.Tag.ToString() != "Hijo" && this.Tag.ToString() != "Conyuge")
-                    {
-                        guardarDatos();
-                        MessageBox.Show("Datos guardados exitosamente");
-                        this.Close();
-                    }
                 }
-
             }
         }
 
@@ -111,9 +94,7 @@ namespace UberFrba.Abm_Cliente
             {
                 return true;
             }
-
             return false;
-
         }
 
         public SqlCommand generarComandoSQL()
@@ -128,7 +109,14 @@ namespace UberFrba.Abm_Cliente
             guardar.Parameters.Add("@Nombre", SqlDbType.VarChar).Value = txtNombre.Text;
             guardar.Parameters.Add("@Apellido", SqlDbType.VarChar).Value = txtApellido.Text;
             guardar.Parameters.Add("@Documento", SqlDbType.Decimal).Value = txtDocumento.Text;
-            guardar.Parameters.Add("@Domicilio", SqlDbType.VarChar).Value = txtDomicilio.Text;
+            
+            // FALTA ESTO!!!
+            //guardar.Parameters.Add("@Calle", SqlDbType.VarChar).Value = txtCalle.Text;
+            //guardar.Parameters.Add("@Piso", SqlDbType.Decimal).Value = txtPiso.Text;
+            //guardar.Parameters.Add("@Departamento", SqlDbType.VarChar).Value = txtDepartamento.Text;
+            //guardar.Parameters.Add("@Localidad", SqlDbType.VarChar).Value = txtLocalidad.Text;
+            //guardar.Parameters.Add("@CodigoPostal", SqlDbType.Decimal).Value = txtCodigoPostal.Text;
+
             guardar.Parameters.Add("@Telefono", SqlDbType.Decimal).Value = txtTelefono.Text;
             guardar.Parameters.Add("@Email", SqlDbType.VarChar).Value = txtEmail.Text;
             guardar.Parameters.Add("@FechaNac", SqlDbType.DateTime).Value = dtpNacimiento.Text;
@@ -140,10 +128,9 @@ namespace UberFrba.Abm_Cliente
         {
             conexion.Open();
 
-
             if (this.Tag.ToString() == "Agregar")
             {
-                SqlCommand nuevoIdPaciente = new SqlCommand("OSNR.ObtenerNuevoIdCliente", conexion);
+                SqlCommand nuevoIdCliente = new SqlCommand("OSNR.ObtenerNuevoIdCliente", conexion);
                 nuevoIdCliente.CommandType = CommandType.StoredProcedure;
 
                 var nuevoId = nuevoIdCliente.Parameters.Add("@id", SqlDbType.Decimal);
@@ -160,15 +147,6 @@ namespace UberFrba.Abm_Cliente
             SqlCommand comando = generarComandoSQL();
             comando.Connection = conexion;
             comando.Transaction = transaccion;
-
-
-            if (planCambiado != null)
-            {
-                SqlCommand comandoCambioPlan = planCambiado.generarComandoSQL();
-                comandoCambioPlan.Connection = conexion;
-                comandoCambioPlan.Transaction = transaccion;
-                comandoCambioPlan.ExecuteNonQuery();
-            }
 
             comando.ExecuteNonQuery();
 
@@ -194,10 +172,22 @@ namespace UberFrba.Abm_Cliente
             {
                 MessageBox.Show("El documento debe contener solo numeros");
             }
-            else if (txtDomicilio.Text == "")
-            {
-                MessageBox.Show("Complete el domicilio");
-            }
+
+            //FALTA ESTO!!!
+
+            //else if (txtCalle.Text == "")
+            //{
+            //    MessageBox.Show("Complete la calle");
+            //}
+            //else if (txtLocalidad.Text == "")
+            //{
+            //    MessageBox.Show("Complete la localidad");
+            //}
+            //else if (txtCodigoPostal.Text == "")
+            //{
+            //    MessageBox.Show("Complete el codigo postal");
+            //}
+
             else if (txtTelefono.Text == "")
             {
                 MessageBox.Show("Complete el telefono");
@@ -210,7 +200,6 @@ namespace UberFrba.Abm_Cliente
             {
                 MessageBox.Show("Complete el email");
             }
-                //faltan mas
             else
             {
                 return true;
