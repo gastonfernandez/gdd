@@ -59,6 +59,7 @@
             this.textoUsuario.Name = "textoUsuario";
             this.textoUsuario.Size = new System.Drawing.Size(100, 20);
             this.textoUsuario.TabIndex = 2;
+            this.textoUsuario.Text = "admin";
             this.textoUsuario.TextChanged += new System.EventHandler(this.textoUsuario_TextChanged);
             // 
             // textoPassword
@@ -67,6 +68,7 @@
             this.textoPassword.Name = "textoPassword";
             this.textoPassword.Size = new System.Drawing.Size(100, 20);
             this.textoPassword.TabIndex = 3;
+            this.textoPassword.Text = "w23e";
             this.textoPassword.UseSystemPasswordChar = true;
             // 
             // Ingresar

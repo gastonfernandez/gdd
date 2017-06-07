@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using UberFrba.Pagina_Principal;
 using UberFrba.Abm_Rol;
+using UberFrba;
 
 namespace UberFrba
 {
@@ -18,7 +19,7 @@ namespace UberFrba
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AbmRol());
+            Application.Run(new InicioSesion());
         }
     }
 }

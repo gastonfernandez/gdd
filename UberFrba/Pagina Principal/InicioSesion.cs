@@ -60,7 +60,8 @@ namespace UberFrba.Pagina_Principal
                         {
                             usu.roles[0].seleccionado = true;
 
-                            //Hay que llamar al menu principal con el usuario el rol que tiene es el que usa
+                            new FormPrincipal().Show(usu);
+                            this.Hide();
                         }
 
                         

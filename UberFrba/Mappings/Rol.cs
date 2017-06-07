@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace UberFrba.Mappings
 {
-    class Rol
+    public class Rol
     {
         public Int32 rolId;
         public String nombre;
@@ -96,6 +96,22 @@ namespace UberFrba.Mappings
                     "values ("+ this.rolId+","+idFuncionalidad+")");
 
 
+        }
+
+        public List<Int32> ObtenerFuncionalidades()
+        {
+            BaseDeDatos db = new BaseDeDatos();
+            DataTable dt = db.select_query("SELECT * FROM OSNR.FuncionalidadRol" +
+                    " WHERE funcrol_id_rol=" + this.rolId);
+
+            List<Int32> idsFuncionalidades = new List<Int32>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                idsFuncionalidades.Add(Convert.ToInt32(row["funcrol_id_funcionalidad"]));
+            }
+
+            return idsFuncionalidades;
         }
 
         public void Guardar()

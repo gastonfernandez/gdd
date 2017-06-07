@@ -1,6 +1,6 @@
-﻿namespace UberFrba.Facturacion
+﻿namespace UberFrba.Listado_Estadistico
 {
-    partial class Form1
+    partial class ListadoEstadistico
     {
         /// <summary>
         /// Required designer variable.

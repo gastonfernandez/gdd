@@ -1,6 +1,6 @@
-﻿namespace UberFrba.Abm_Automovil
+﻿namespace UberFrba.Abm_Turno
 {
-    partial class Form1
+    partial class AbmAutomovil
     {
         /// <summary>
         /// Required designer variable.

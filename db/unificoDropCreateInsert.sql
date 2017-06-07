@@ -3,90 +3,90 @@ GO
 
 /*** BORRO LO EXISTENTE ***/
 DECLARE @names_sp varchar(max)
-	DECLARE @names_func varchar(max)
-	DECLARE @names_veiws varchar(max)
-	DECLARE @names_tables varchar(max)
-	DECLARE @names_types varchar(max)
-	DECLARE @names_triggers varchar(max)
+DECLARE @names_func varchar(max)
+DECLARE @names_veiws varchar(max)
+DECLARE @names_tables varchar(max)
+DECLARE @names_types varchar(max)
+DECLARE @names_triggers varchar(max)
 
-	DECLARE @sql varchar(max)
+DECLARE @sql varchar(max)
 
-	--Borro los triggers
-	SELECT @names_triggers = coalesce(@names_triggers + ', ','') + '[OSNR].' + t.NAME
-	FROM GD1C2017.sys.objects t, GD1C2017.sys.schemas s
-	WHERE s.schema_id = t.schema_id AND s.name = 'OSNR' AND  t.type = 'TR'
+--Borro los triggers
+SELECT @names_triggers = coalesce(@names_triggers + ', ','') + '[OSNR].' + t.NAME
+FROM GD1C2017.sys.objects t, GD1C2017.sys.schemas s
+WHERE s.schema_id = t.schema_id AND s.name = 'OSNR' AND  t.type = 'TR'
 	
-	SET @sql = 'DROP TRIGGER ' + @names_triggers
-	EXEC(@sql)
+SET @sql = 'DROP TRIGGER ' + @names_triggers
+EXEC(@sql)
 
-	--Borro los stored procedures
-	SELECT @names_sp = coalesce(@names_sp + ', ','') + '[OSNR].' + p.NAME
-	FROM GD1C2017.sys.procedures p, GD1C2017.sys.schemas s
-	WHERE s.schema_id = p.schema_id AND p.NAME != 'CleanDatabase' AND p.NAME != 'NO_CHECK_CONSTRAINS' AND s.name = 'OSNR'
+--Borro los stored procedures
+SELECT @names_sp = coalesce(@names_sp + ', ','') + '[OSNR].' + p.NAME
+FROM GD1C2017.sys.procedures p, GD1C2017.sys.schemas s
+WHERE s.schema_id = p.schema_id AND p.NAME != 'CleanDatabase' AND p.NAME != 'NO_CHECK_CONSTRAINS' AND s.name = 'OSNR'
 	
-	SET @sql = 'DROP PROCEDURE ' + @names_sp
-	EXEC(@sql)
+SET @sql = 'DROP PROCEDURE ' + @names_sp
+EXEC(@sql)
 
-	--Borro las functions
-	SELECT @names_func = coalesce(@names_func + ', ','') + '[OSNR].' + f.NAME
-	FROM GD1C2017.sys.objects f, GD1C2017.sys.schemas s
-	WHERE s.schema_id = f.schema_id AND s.name = 'OSNR' AND  f.type IN ('FN', 'IF', 'TF')
+--Borro las functions
+SELECT @names_func = coalesce(@names_func + ', ','') + '[OSNR].' + f.NAME
+FROM GD1C2017.sys.objects f, GD1C2017.sys.schemas s
+WHERE s.schema_id = f.schema_id AND s.name = 'OSNR' AND  f.type IN ('FN', 'IF', 'TF')
 	
-	SET @sql = 'DROP FUNCTION ' + @names_func
-	EXEC(@sql)
+SET @sql = 'DROP FUNCTION ' + @names_func
+EXEC(@sql)
 
 
-	--Borro las vistas
-	SELECT @names_veiws = coalesce(@names_veiws + ', ','') + '[OSNR].' + TABLE_NAME
-	FROM GD1C2017.INFORMATION_SCHEMA.VIEWS
-	WHERE TABLE_SCHEMA = 'OSNR'
+--Borro las vistas
+SELECT @names_veiws = coalesce(@names_veiws + ', ','') + '[OSNR].' + TABLE_NAME
+FROM GD1C2017.INFORMATION_SCHEMA.VIEWS
+WHERE TABLE_SCHEMA = 'OSNR'
 
-	SET @sql = 'DROP VIEW ' + @names_veiws
-	EXEC(@sql)
+SET @sql = 'DROP VIEW ' + @names_veiws
+EXEC(@sql)
 
-	-- Deshabilito la integridad referencial de las tablas a borrar
+-- Deshabilito la integridad referencial de las tablas a borrar
 	
-	DECLARE tables_in_schema CURSOR FOR 
-	SELECT f.name, Object_NAME(f.parent_object_id)
-	FROM sys.foreign_keys AS f JOIN
-	sys.schemas AS s ON s.schema_id = f.schema_id
-	WHERE s.name = 'OSNR'
+DECLARE tables_in_schema CURSOR FOR 
+SELECT f.name, Object_NAME(f.parent_object_id)
+FROM sys.foreign_keys AS f JOIN
+sys.schemas AS s ON s.schema_id = f.schema_id
+WHERE s.name = 'OSNR'
 
-	DECLARE @table_name varchar(max)
-	DECLARE @fk_name varchar(max)
+DECLARE @table_name varchar(max)
+DECLARE @fk_name varchar(max)
 
-	OPEN tables_in_schema 
+OPEN tables_in_schema 
+
+FETCH tables_in_schema INTO  @fk_name, @table_name
+
+WHILE (@@FETCH_STATUS = 0) 
+BEGIN 
+	SET @sql = 'ALTER TABLE OSNR.' + @table_name + ' DROP CONSTRAINT ' + @fk_name
+	EXEC(@sql)
 
 	FETCH tables_in_schema INTO  @fk_name, @table_name
+END 
 
-	WHILE (@@FETCH_STATUS = 0) 
-	BEGIN 
-		SET @sql = 'ALTER TABLE OSNR.' + @table_name + ' DROP CONSTRAINT ' + @fk_name
-		EXEC(@sql)
-
-		FETCH tables_in_schema INTO  @fk_name, @table_name
-	END 
-
-	CLOSE tables_in_schema 
-	DEALLOCATE tables_in_schema
+CLOSE tables_in_schema 
+DEALLOCATE tables_in_schema
 
 
 
-	--Borro las tablas excepto la maestra
-	SELECT @names_tables = coalesce(@names_tables + ', ','') + '[OSNR].' + TABLE_NAME
-	FROM GD1C2017.INFORMATION_SCHEMA.TABLES
-	WHERE TABLE_SCHEMA = 'OSNR' and TABLE_TYPE = 'BASE TABLE'
+--Borro las tablas excepto la maestra
+SELECT @names_tables = coalesce(@names_tables + ', ','') + '[OSNR].' + TABLE_NAME
+FROM GD1C2017.INFORMATION_SCHEMA.TABLES
+WHERE TABLE_SCHEMA = 'OSNR' and TABLE_TYPE = 'BASE TABLE'
 
-	SET @sql = 'DROP TABLE ' + @names_tables
-	EXEC(@sql)
+SET @sql = 'DROP TABLE ' + @names_tables
+EXEC(@sql)
 
-	--Borro los User define types
-	SELECT @names_types = coalesce( @names_types + ' DROP TYPE ','DROP TYPE ') + '[OSNR].' + t.NAME
-	FROM GD1C2017.sys.types t, GD1C2017.sys.schemas s
-	WHERE s.schema_id = t.schema_id AND s.name = 'OSNR'
+--Borro los User define types
+SELECT @names_types = coalesce( @names_types + ' DROP TYPE ','DROP TYPE ') + '[OSNR].' + t.NAME
+FROM GD1C2017.sys.types t, GD1C2017.sys.schemas s
+WHERE s.schema_id = t.schema_id AND s.name = 'OSNR'
 
-	SET @sql = @names_types
-	EXEC(@sql)
+SET @sql = @names_types
+EXEC(@sql)
 
 IF (EXISTS (SELECT * FROM sys.schemas WHERE name = 'OSNR')) 
 BEGIN
@@ -266,40 +266,40 @@ INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
 	values(1, 1)
 GO
 
-
 INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
 	values(1, 2)
 
-
-/* TODO: ASIGNAR FUNCIONALIDADES A CADA ROL..
-INSERT INTO OSNR.FuncionalidadRol values (1,1)
-INSERT INTO OSNR.FuncionalidadRol values (1,2)
-INSERT INTO OSNR.FuncionalidadRol values (1,3)
-INSERT INTO OSNR.FuncionalidadRol values (1,4)
-INSERT INTO OSNR.FuncionalidadRol values (1,5)
-INSERT INTO OSNR.FuncionalidadRol values (1,6)
-INSERT INTO OSNR.FuncionalidadRol values (1,7)
-INSERT INTO OSNR.FuncionalidadRol values (1,8)
-INSERT INTO OSNR.FuncionalidadRol values (1,9)
-INSERT INTO OSNR.FuncionalidadRol values (1,10)
-
-INSERT INTO OSNR.FuncionalidadRol values (2,6)
-INSERT INTO OSNR.FuncionalidadRol values (2,8)
-INSERT INTO OSNR.FuncionalidadRol values (2,9)
+/* Agregamos las funcionalidades.. */
+INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('ABM Rol')
+INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('ABM Cliente')
+INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('ABM Chofer')
+INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('ABM Automovil')
+INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('ABM Turno')
+INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('Registro de Viaje')
+INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('Rendicion de Viaje')
+INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('Facturacion de Cliente')
+INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('Listados Estadistico')
 GO
 
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('ABM Rol')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('ABM Ruta Aerea')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('ABM Aeronave')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Generar Viaje')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Registrar Llegada')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Compra Pasaje/Encomienda') --cliente
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Cancelacion Pasaje/Encomienda')
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Consultar Millas') --cliente
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Canjear Millas') --cliente
-INSERT INTO OSNR.Funcionalidad (descripcion) values ('Listados Estadisticos')
+/* (id_rol, id_funcionalidad) (primero todas las del admin..) */
+-- Admin
+--INSERT INTO OSNR.FuncionalidadRol values (1,1) -- ABM Rol
+--INSERT INTO OSNR.FuncionalidadRol values (1,2) -- ABM Cliente
+--INSERT INTO OSNR.FuncionalidadRol values (1,3) -- ABM Chofer
+--INSERT INTO OSNR.FuncionalidadRol values (1,4) -- ABM Automovil
+--INSERT INTO OSNR.FuncionalidadRol values (1,5) -- ABM Turno
+INSERT INTO OSNR.FuncionalidadRol values (1,6) -- Registro de Viaje
+INSERT INTO OSNR.FuncionalidadRol values (1,7) -- Rendicion de Viaje
+--INSERT INTO OSNR.FuncionalidadRol values (1,8) -- Facturacion de Cliente
+INSERT INTO OSNR.FuncionalidadRol values (1,9) -- Listados Estadistico
+
+-- Cliente
+--INSERT INTO OSNR.FuncionalidadRol values (2,6) -- QUE BOSTA PUEDE HACER EL CLIENTE???
+
+
+-- Chofer
+INSERT INTO OSNR.FuncionalidadRol values (3,6) -- Registro de Viaje
 GO
-*/
 
 
 /*****************************************************************/
@@ -409,7 +409,7 @@ INSERT INTO OSNR.VehiculoTurno
 
 GO
 
-/* Vije */
+/* Viaje */
 INSERT INTO OSNR.Viaje
 (via_cantidad_km,via_fecha,via_id_chofer,via_id_cliente,via_id_vehiculo)
 	SELECT DISTINCT Viaje_Cant_Kilometros, 

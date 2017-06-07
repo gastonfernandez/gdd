@@ -1,6 +1,6 @@
-﻿namespace UberFrba.Registro_Viajes
+﻿namespace UberFrba.Facturacion
 {
-    partial class Form1
+    partial class FacturacionCliente
     {
         /// <summary>
         /// Required designer variable.

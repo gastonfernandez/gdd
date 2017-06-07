@@ -10,7 +10,7 @@ using UberFrba.Mappings;
 namespace UberFrba.Mappings
 {
 
-    class Usuario
+    public class Usuario
     {
         public Int32 Id = 0;
         public Int32 dni;
