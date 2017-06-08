@@ -28,7 +28,7 @@ namespace UberFrba.Abm_Chofer
             conexion.Open();
             SqlCommand cargar = new SqlCommand("OSNR.CargarChoferes", conexion);
             cargar.CommandType = CommandType.StoredProcedure;
-            cargar.Parameters.Add("@Chofer", SqlDbType.VarChar).Value = txtChofer.Text;
+            cargar.Parameters.Add("@Chofer", SqlDbType.Decimal).Value = txtChofer.Text;
             cargar.Parameters.Add("@Nombre", SqlDbType.VarChar).Value = txtNombre.Text;
             cargar.Parameters.Add("@Apellido", SqlDbType.VarChar).Value = txtApellido.Text;
             cargar.Parameters.Add("@Documento", SqlDbType.Decimal).Value = txtDni.Text;
