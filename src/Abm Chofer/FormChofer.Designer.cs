@@ -1,6 +1,6 @@
-﻿namespace UberFrba.Abm_Chofer
+namespace UberFrba.Abm_Chofer
 {
-    partial class Form1
+    partial class FormChofer
     {
         /// <summary>
         /// Required designer variable.
@@ -41,6 +41,8 @@
             this.txtNombre = new System.Windows.Forms.TextBox();
             this.lblApellido = new System.Windows.Forms.Label();
             this.lblNombre = new System.Windows.Forms.Label();
+            this.txtChofer = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -103,6 +105,8 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Controls.Add(this.txtChofer);
+            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.btnBuscar);
             this.panel1.Controls.Add(this.btnLimpiar);
             this.panel1.Controls.Add(this.txtDni);
@@ -205,7 +209,28 @@
             this.lblNombre.Text = "Nombre:";
             this.lblNombre.Click += new System.EventHandler(this.lblNombre_Click);
             // 
-            // Form1
+            // txtChofer
+            // 
+            this.txtChofer.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.txtChofer.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtChofer.Location = new System.Drawing.Point(425, 50);
+            this.txtChofer.MaxLength = 18;
+            this.txtChofer.Name = "txtChofer";
+            this.txtChofer.Size = new System.Drawing.Size(182, 23);
+            this.txtChofer.TabIndex = 8;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(323, 50);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(82, 19);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Id Chofer:";
+            // 
+            // FormChofer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -216,9 +241,9 @@
             this.Controls.Add(this.btnEditar);
             this.Controls.Add(this.btnAñadir);
             this.Controls.Add(this.panel1);
-            this.Name = "Form1";
+            this.Name = "FormChofer";
             this.Text = "ABM Choferes";
-            this.Load += new System.EventHandler(this.Form1_Load);
+            this.Load += new System.EventHandler(this.FormChofer_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -241,5 +266,7 @@
         private System.Windows.Forms.TextBox txtNombre;
         private System.Windows.Forms.Label lblApellido;
         private System.Windows.Forms.Label lblNombre;
+        private System.Windows.Forms.TextBox txtChofer;
+        private System.Windows.Forms.Label label2;
     }
 }
