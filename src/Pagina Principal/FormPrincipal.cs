@@ -15,6 +15,7 @@ using UberFrba.Registro_Viajes;
 using UberFrba.Rendicion_Viajes;
 using UberFrba.Facturacion;
 using UberFrba.Listado_Estadistico;
+using autom;
 
 namespace UberFrba
 {
