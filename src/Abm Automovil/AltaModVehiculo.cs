@@ -36,10 +36,10 @@ namespace autom
         public void llenarCamposVista()
         {
             String query = "select distinct veh_id_modelo,veh_id_chofer, veh_patente,veh_licencia,veh_rodado,veh_habilitado, vt.auttur_id_vehiculo ";
-            query += "from vehiculo v join vehiculoturno vt on vt.auttur_id_vehiculo = v.veh_id ";
+            query += "from OSNR.vehiculo v join OSNR.vehiculoturno vt on vt.auttur_id_vehiculo = v.veh_id ";
             query += "where veh_id =" + this.item.Text;
             DataTable dtAuto = db.select_query(query);
-            DataTable dtAutoTurno = db.select_query("select auttur_id_turno from vehiculo v join vehiculoturno vt on vt.auttur_id_vehiculo = v.veh_id where v.veh_id = " + this.item.Text);
+            DataTable dtAutoTurno = db.select_query("select auttur_id_turno from OSNR.vehiculo v join OSNR.vehiculoturno vt on vt.auttur_id_vehiculo = v.veh_id where v.veh_id = " + this.item.Text);
 
             DataRow auto = dtAuto.Rows[0];
             DataRow autoTurno = dtAutoTurno.Rows[0];
@@ -67,12 +67,12 @@ namespace autom
         public void LLenarComboMarca()
         {
             List<Combo> lista = new List<Combo>();
-            //DataTable dt = db.select_query("select distinct mar_id, mar_nombre from marca");//todas las marcas posibles
+            DataTable dt = db.select_query("select distinct mar_id, mar_nombre from OSNR.marca");//todas las marcas posibles
 
-            //foreach (DataRow row in dt.Rows)
-            //    lista.Add(new Combo(Convert.ToString(row["mar_nombre"]), Convert.ToInt32(row["mar_id"])));
-            //comboMarca.DisplayMember = "mar_id";
-            lista.Add(new Combo("Chevrolet", 1));//sacar
+            foreach (DataRow row in dt.Rows)
+                lista.Add(new Combo(Convert.ToString(row["mar_nombre"]), Convert.ToInt32(row["mar_id"])));
+            comboMarca.DisplayMember = "mar_id";
+            //lista.Add(new Combo("Chevrolet", 1));//sacar
             comboMarca.ValueMember = "mar_nombre";
             comboMarca.DataSource = lista; 
         }
@@ -81,10 +81,10 @@ namespace autom
         {
 
             List<Combo> lista = new List<Combo>();
-            //DataTable dt = db.select_query("select distinct tur_id, tur_descripcion from turno");
-            //foreach (DataRow row in dt.Rows)
-            //    lista.Add(new Combo(Convert.ToString(row["tur_descripcion"]), Convert.ToInt32(row["tur_id"])));
-            lista.Add(new Combo("Noche", 1));//sacar
+            DataTable dt = db.select_query("select distinct tur_id, tur_descripcion from OSNR.turno");
+            foreach (DataRow row in dt.Rows)
+                lista.Add(new Combo(Convert.ToString(row["tur_descripcion"]), Convert.ToInt32(row["tur_id"])));
+            //lista.Add(new Combo("Noche", 1));//sacar
             comboTurno.DisplayMember = "tur_id";
             comboTurno.ValueMember = "tur_descripcion";
             comboTurno.DataSource = lista; 
@@ -92,21 +92,21 @@ namespace autom
 
         public void LLenarListaChofer()
         {
-            //DataTable dt = db.select_query("select u.usu_login, u.usu_nombre, u.usu_apellido, c.cho_id from ususario u join chofer c on c.cho_id_usuario = u.usu_id");
-            //foreach (DataRow row in dt.Rows)
-            //{
-            //    ListViewItem item = new ListViewItem(Convert.ToString(row["cho_id"]));//no deberia mostrarse
-            //    item.SubItems.Add(Convert.ToString(row["usu_apellido"]));
-            //    item.SubItems.Add(Convert.ToString(row["usu_nombre"]));
-            //    item.SubItems.Add(Convert.ToString(row["usu_login"]));
+            DataTable dt = db.select_query("select u.usu_login, u.usu_nombre, u.usu_apellido, c.cho_id from OSNR.usuario u join OSNR.chofer c on c.cho_id_usuario = u.usu_id");
+            foreach (DataRow row in dt.Rows)
+            {
+                ListViewItem item = new ListViewItem(Convert.ToString(row["cho_id"]));//no deberia mostrarse
+                item.SubItems.Add(Convert.ToString(row["usu_apellido"]));
+                item.SubItems.Add(Convert.ToString(row["usu_nombre"]));
+                item.SubItems.Add(Convert.ToString(row["usu_login"]));
 
-            //    listaChofer.Items.Add(item);
-            //}
-            ListViewItem itme = new ListViewItem("1111111");
-            itme.SubItems.Add("adfgadg");
-            itme.SubItems.Add("adfgadg");
-            itme.SubItems.Add("gadfgasdf");
-            listaChofer.Items.Add(itme);
+                listaChofer.Items.Add(item);
+            }
+            //ListViewItem itme = new ListViewItem("1111111");
+            //itme.SubItems.Add("adfgadg");
+            //itme.SubItems.Add("adfgadg");
+            //itme.SubItems.Add("gadfgasdf");
+            //listaChofer.Items.Add(itme);
         }
 
         private void btnVolver_Click(object sender, EventArgs e)
@@ -162,15 +162,15 @@ namespace autom
 
         public void insertarVehiculoTurno()
         {
-            DataTable dt = db.select_query("select max(veh_id) as vehId from vehiculo where veh_patente = '" + txtPatente.Text + "' and veh_habilitado = " + 1);
+            DataTable dt = db.select_query("select max(veh_id) as vehId from OSNR.vehiculo where veh_patente = '" + txtPatente.Text + "' and veh_habilitado = " + 1);
             DataRow row = dt.Rows[0];
             Int64 idVehiculo = Convert.ToInt64(row["vehId"]);
             db.query("insert into VehiculoTurno values (" + idVehiculo + "," + comboTurno.DisplayMember.ToString() + ")");
         }
 
         public Int64 recuperarIdModelo()
-        { 
-            DataTable dt = db.select_query("select max(mod_id) as idModelo from marca ma join modelo mo on ma.mar_id = mo.mod_id_marca where ma.mar_id =" + comboMarca.DisplayMember.ToString() + " and mo.mod_nombre = " + txtModelo.Text);
+        {
+            DataTable dt = db.select_query("select max(mod_id) as idModelo from OSNR.marca ma join OSNR.modelo mo on ma.mar_id = mo.mod_id_marca where ma.mar_id =" + comboMarca.DisplayMember.ToString() + " and mo.mod_nombre = " + txtModelo.Text);
             DataRow row = dt.Rows[0];
             return Convert.ToInt64(row["idModelo"]);
         }
@@ -199,14 +199,14 @@ namespace autom
 
         public void validarMarcaModelo()
         { 
-            DataTable dt = db.select_query("select max(mod_id) from marca ma join modelo mo on ma.mar_id = mo.mod_id_marca where ma.mar_id =" + comboMarca.DisplayMember.ToString() + " and mo.mod_nombre = " + txtModelo.Text);
+            DataTable dt = db.select_query("select max(mod_id) from OSNR.marca ma join modelo mo on ma.mar_id = mo.mod_id_marca where ma.mar_id =" + comboMarca.DisplayMember.ToString() + " and mo.mod_nombre = " + txtModelo.Text);
             if (dt.Rows.Count == 0)
                throw new Exception("El nombre de Modelo ingresado no existe, o no se encuentra relacionado con la Marca ingresada");
         }
 
         public void validarUnicidadChofer(Int64 idChofer)
-        { 
-            String query= "select veh_id from vehiculo v join chofer c on v.veh_id_chofer = c.cho_id where veh_habilitado = 1";
+        {
+            String query = "select veh_id from OSNR.vehiculo v join OSNR.chofer c on v.veh_id_chofer = c.cho_id where veh_habilitado = 1";
             if (item != null)
                 query += " and veh_id <> " + item.Text;
             DataTable dt = db.select_query(query);
@@ -216,13 +216,14 @@ namespace autom
 
         public void validarPatente()
         {
-            String query = "select veh_id from vehiculo where veh_habilitado = 1 and veh_patente = " + txtPatente.Text;
+            String query = "select veh_id from OSNR.vehiculo where veh_habilitado = 1 and veh_patente = " + txtPatente.Text;
             if (item != null)
                 query += " and veh_id <> " + item.Text;
             DataTable dt = db.select_query(query);
             if (dt.Rows.Count > 0)
                 throw new Exception("Ya existe un Automovil con la patente ingresada");   
         }
+
 
     }
 }

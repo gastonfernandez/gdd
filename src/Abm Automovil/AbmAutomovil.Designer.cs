@@ -58,6 +58,7 @@
             this.btnModificar.TabIndex = 25;
             this.btnModificar.Text = "Modificar";
             this.btnModificar.UseVisualStyleBackColor = false;
+            this.btnModificar.Click += new System.EventHandler(this.altaVehiculo_Click);
             // 
             // btnBorrar
             // 
@@ -68,6 +69,7 @@
             this.btnBorrar.TabIndex = 24;
             this.btnBorrar.Text = "Borrar";
             this.btnBorrar.UseVisualStyleBackColor = false;
+            this.btnBorrar.Click += new System.EventHandler(this.btnBorrar_Click);
             // 
             // btnBuscar
             // 
@@ -77,6 +79,7 @@
             this.btnBuscar.TabIndex = 23;
             this.btnBuscar.Text = "Buscar";
             this.btnBuscar.UseVisualStyleBackColor = true;
+            this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click);
             // 
             // txtChofer
             // 
@@ -192,6 +195,7 @@
             this.altaVehiculo.TabIndex = 13;
             this.altaVehiculo.Text = "Alta Nuevo Vehiculo";
             this.altaVehiculo.UseVisualStyleBackColor = false;
+            this.altaVehiculo.Click += new System.EventHandler(this.altaVehiculo_Click);
             // 
             // AbmAutomovil
             // 

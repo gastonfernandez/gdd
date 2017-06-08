@@ -111,7 +111,7 @@
             this.Login});
             this.listaChofer.Location = new System.Drawing.Point(104, 167);
             this.listaChofer.Name = "listaChofer";
-            this.listaChofer.Size = new System.Drawing.Size(244, 97);
+            this.listaChofer.Size = new System.Drawing.Size(301, 97);
             this.listaChofer.TabIndex = 32;
             this.listaChofer.UseCompatibleStateImageBehavior = false;
             this.listaChofer.View = System.Windows.Forms.View.Details;
@@ -123,14 +123,17 @@
             // Apellido
             // 
             this.Apellido.Text = "Apellido";
+            this.Apellido.Width = 82;
             // 
             // Nombre
             // 
             this.Nombre.Text = "Nombre";
+            this.Nombre.Width = 74;
             // 
             // Login
             // 
             this.Login.Text = "Login";
+            this.Login.Width = 83;
             // 
             // label6
             // 
@@ -150,6 +153,7 @@
             this.btnGuardar.TabIndex = 30;
             this.btnGuardar.Text = "Guardar";
             this.btnGuardar.UseVisualStyleBackColor = true;
+            this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
             // 
             // btnVolver
             // 
@@ -160,6 +164,7 @@
             this.btnVolver.TabIndex = 29;
             this.btnVolver.Text = "Volver";
             this.btnVolver.UseVisualStyleBackColor = false;
+            this.btnVolver.Click += new System.EventHandler(this.btnVolver_Click);
             // 
             // comboTurno
             // 
