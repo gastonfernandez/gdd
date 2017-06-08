@@ -16,12 +16,13 @@ namespace UberFrba.Abm_Chofer
         Validacion v = new Validacion();
         SqlConnection conexion;
         decimal chofer;
-        List<EditarChofer> afiliadosChofers = new List<EditarChofer>();
+        List<EditarChofer> choferesAsociados = new List<EditarChofer>();
 
         public EditarChofer()
         {
             InitializeComponent();
-            //dtpNacimiento.Value = Configuraciones.fecha;
+            conexion = new SqlConnection(@Config.strConnection);
+            dtpNacimiento.Value = Config.fecha;
         }
 
         public void cargarDatos(decimal numeroChofer)
@@ -41,7 +42,6 @@ namespace UberFrba.Abm_Chofer
 
             txtNombre.Enabled = false;
             txtApellido.Enabled = false;
-            cboTipoDocumento.Enabled = false;
             txtDocumento.Enabled = false;
             dtpNacimiento.Enabled = false;
 
@@ -49,11 +49,7 @@ namespace UberFrba.Abm_Chofer
             txtApellido.Text = tabla.Rows[0]["usu_apellido"].ToString();
             txtDocumento.Text = tabla.Rows[0]["usu_dni"].ToString();
 
-            // FALTA ESTO
-            //txtCalle.Text = tabla.Rows[0]["usu_direccion"].ToString();
-            //txtPiso.Text = tabla.Rows[0]["usu_direccion"].ToString();
-            //txtDepartamento = tabla.Rows[0]["usu_direccion"].ToString();
-            //TxtLocalidad = tabla.Rows[0]["usu_direccion"].ToString();
+            txtDomicilio.Text = tabla.Rows[0]["usu_direccion"].ToString();
 
             txtTelefono.Text = tabla.Rows[0]["usu_telefono"].ToString();
             txtEmail.Text = tabla.Rows[0]["usu_mail"].ToString();
@@ -109,11 +105,7 @@ namespace UberFrba.Abm_Chofer
             guardar.Parameters.Add("@Apellido", SqlDbType.VarChar).Value = txtApellido.Text;
             guardar.Parameters.Add("@Documento", SqlDbType.Decimal).Value = txtDocumento.Text;
 
-            // FALTA ESTO!!!
-            //guardar.Parameters.Add("@Calle", SqlDbType.VarChar).Value = txtCalle.Text;
-            //guardar.Parameters.Add("@Piso", SqlDbType.Decimal).Value = txtPiso.Text;
-            //guardar.Parameters.Add("@Departamento", SqlDbType.VarChar).Value = txtDepartamento.Text;
-            //guardar.Parameters.Add("@Localidad", SqlDbType.VarChar).Value = txtLocalidad.Text;
+            guardar.Parameters.Add("@Domicilio", SqlDbType.VarChar).Value = txtDomicilio.Text;
 
             guardar.Parameters.Add("@Telefono", SqlDbType.Decimal).Value = txtTelefono.Text;
             guardar.Parameters.Add("@Email", SqlDbType.VarChar).Value = txtEmail.Text;
@@ -171,16 +163,10 @@ namespace UberFrba.Abm_Chofer
                 MessageBox.Show("El documento debe contener solo numeros");
             }
 
-            //FALTA ESTO!!!
-
-            //else if (txtCalle.Text == "")
-            //{
-            //    MessageBox.Show("Complete la calle");
-            //}
-            //else if (txtLocalidad.Text == "")
-            //{
-            //    MessageBox.Show("Complete la localidad");
-            //}
+            else if (txtDomicilio.Text == "")
+            {
+                MessageBox.Show("Complete el domicilio");
+            }
 
             else if (txtTelefono.Text == "")
             {
