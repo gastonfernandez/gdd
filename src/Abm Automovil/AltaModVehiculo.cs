@@ -224,6 +224,12 @@ namespace autom
                 throw new Exception("Ya existe un Automovil con la patente ingresada");   
         }
 
+        private void comboMarca_SelectedIndexChanged(object sender, EventArgs e)
+        {
+          
+
+        }
+
 
     }
 }
