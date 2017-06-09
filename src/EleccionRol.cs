@@ -47,8 +47,9 @@ namespace UberFrba
                 if (comb.Value == rol.rolId)
                     rol.seleccionado = true;
 
-            //Hay que llamar al menu principal con el usuario, una opcion es eliminar el rol que no va la otra es dejarlo con el selected
 
+            new FormPrincipal().Show(usuario);
+            this.Close();
         }   
 
     }

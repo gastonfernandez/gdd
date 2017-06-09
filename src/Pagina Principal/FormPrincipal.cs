@@ -25,9 +25,7 @@ namespace UberFrba
         Usuario usuarioLogueado;
 
         public FormPrincipal()
-        {
-            
-
+        {  
             InitializeComponent();
             ids_funcionalidades.Add(1, aBMRolToolStripMenuItem);
             ids_funcionalidades.Add(2, aBMClienteToolStripMenuItem);
