@@ -107,8 +107,6 @@ IF (NOT EXISTS (SELECT * FROM sys.schemas WHERE name = 'OSNR'))
 BEGIN
 SET @sql = ' CREATE SCHEMA [OSNR] AUTHORIZATION gd'
 	EXEC(@sql)
-
-  
 END
 
 
@@ -322,7 +320,6 @@ INSERT INTO OSNR.Modelo
 GO
 
 
-
 /* Usuarios */
 /* Tomamos como usuario el nombre+apellido y como password su nombre */
 INSERT INTO OSNR.Usuario
@@ -336,8 +333,8 @@ INSERT INTO OSNR.Usuario
 		Chofer_Fecha_Nac,
 		Chofer_Nombre + Chofer_Apellido,
 		HASHBYTES('SHA2_256', Chofer_Nombre),
-		0, /* Intentos login */
-		1  /* Habilitado */
+		0, --Intentos login
+		1  --Habilitado
 	FROM gd_esquema.Maestra
 GO
 
@@ -352,11 +349,10 @@ INSERT INTO OSNR.Usuario
 		Cliente_Fecha_Nac,
 		Cliente_Nombre + Cliente_Apellido,
 		HASHBYTES('SHA2_256', Cliente_Nombre),
-		0, /* Intentos login */
-		1  /* Habilitado */
+		0, --Intentos login
+		1  --Habilitado
 	FROM gd_esquema.Maestra
 GO
-
 
 
 /* Chofer */
@@ -380,7 +376,7 @@ INSERT INTO OSNR.Vehiculo
 					mas.Auto_Patente, 
 					mas.Auto_Licencia, 
 					mas.Auto_Rodado, 
-					1
+					1 --Habilitado
 	FROM	gd_esquema.Maestra mas
 			join OSNR.Modelo m on m.mod_nombre = mas.Auto_Modelo
 			join OSNR.Usuario u on u.usu_dni = mas.Chofer_Dni
@@ -388,14 +384,13 @@ INSERT INTO OSNR.Vehiculo
 GO
 
 /* Turno */
-
 INSERT INTO	OSNR.Turno
 	SELECT DISTINCT Turno_Descripcion, 
 					Turno_Hora_Inicio, 
 					Turno_Hora_Fin, 
 					Turno_Valor_Kilometro, 
 					Turno_Precio_Base, 
-					1 /*habilitado*/
+					1  --Habilitado
 	FROM	gd_esquema.Maestra
 GO
 
@@ -416,19 +411,15 @@ INSERT INTO OSNR.Viaje
 					Viaje_Fecha, 
 					ch.cho_id, 
 					c.cli_id, 
-					v.veh_id
-					 
+					v.veh_id	 
 	FROM gd_esquema.Maestra	mas
 		 join OSNR.Usuario uc on uc.usu_dni = Cliente_Dni  
 		 join OSNR.Cliente c on cli_id_usuario = uc.usu_id
 	     join OSNR.Vehiculo v on veh_patente = Auto_Patente
    		 join OSNR.Usuario uch on uch.usu_dni = Chofer_Dni  
 		 join OSNR.Chofer ch on ch.cho_id_usuario=uch.usu_id
-	WHERE Viaje_Cant_Kilometros IS NOT NULL   
-	
-	
+	WHERE Viaje_Cant_Kilometros IS NOT NULL
 GO
-
 
 /* Factura */
 INSERT INTO OSNR.Factura
@@ -444,8 +435,6 @@ SELECT		    Factura_Nro,
 	WHERE Factura_Nro IS NOT NULL 
 	group by Factura_Nro,Factura_Fecha,Factura_Fecha_Inicio,Factura_Fecha_Fin,c.cli_id
 GO
-
-
 
 /* FacturaViaje */
 INSERT INTO OSNR.FacturaViaje
@@ -465,7 +454,7 @@ INSERT INTO OSNR.FacturaViaje
 	where factura.fac_numero is not null
 GO
 
-
+/* Rendicion */
 insert into OSNR.Rendicion
 (ren_numero,ren_fecha,ren_importe,ren_id_chofer)
 	select distinct mas.Rendicion_Nro,
@@ -478,5 +467,93 @@ insert into OSNR.Rendicion
 	where	mas.Rendicion_Nro is not null	     			
 GO
 
+	
+/*****************************************************************/
+/*********************** Stored Procedures ***********************/
+/*****************************************************************/
 
 
+/*Listados Estadisticos*/
+
+--Choferes con mayor recaudación
+CREATE PROCEDURE OSNR.TOP5ChoferesConMayorRecaudacion
+@fecha_inicio datetime,
+@fecha_fin datetime
+AS
+	SELECT TOP 5
+		usu_nombre Nombre,
+		usu_apellido Apellido,
+		usu_dni DNI,
+		usu_telefono Telefono,
+		usu_mail Mail,
+		SUM(ren_importe) FacturacionTotal
+	FROM OSNR.Chofer
+		JOIN OSNR.Rendicion ON ren_id_chofer=cho_id
+		JOIN OSNR.Usuario ON usu_id=cho_id_usuario
+	WHERE ren_fecha between @fecha_inicio and @fecha_fin
+	GROUP BY cho_id, usu_nombre, usu_apellido, usu_dni, usu_telefono, usu_mail
+	ORDER BY FacturacionTotal DESC
+GO
+
+--Choferes con el viaje más largo realizado
+CREATE PROCEDURE OSNR.TOP5ChoferesConViajeMasLargo
+@fecha_inicio datetime,
+@fecha_fin datetime
+AS
+	SELECT TOP 5
+		usu_nombre Nombre,
+		usu_apellido Apellido,
+		usu_dni DNI,
+		usu_telefono Telefono,
+		usu_mail Mail,
+		via_cantidad_km KmViajeMasLargo
+	FROM OSNR.Viaje
+		JOIN OSNR.Chofer ON via_id_chofer=cho_id
+		JOIN OSNR.Usuario ON usu_id=cho_id_usuario
+	WHERE via_fecha between @fecha_inicio and @fecha_fin
+	ORDER BY KmViajeMasLargo DESC
+GO
+
+--Clientes con mayor consumo
+CREATE PROCEDURE OSNR.TOP5ClientesConMayorConsumo
+@fecha_inicio datetime,
+@fecha_fin datetime
+AS
+	SELECT TOP 5
+		usu_nombre Nombre,
+		usu_apellido Apellido,
+		usu_dni DNI,
+		usu_telefono Telefono,
+		usu_mail Mail,
+		SUM(fac_importe) ConsumoTotal
+	FROM OSNR.Cliente
+		JOIN OSNR.Factura ON fac_id_cliente=cli_id
+		JOIN OSNR.Usuario ON usu_id=cli_id_usuario
+	WHERE fac_fecha between @fecha_inicio and @fecha_fin
+	GROUP BY cli_id, usu_nombre, usu_apellido, usu_dni, usu_telefono, usu_mail
+	ORDER BY ConsumoTotal DESC
+GO
+
+--Cliente que utilizo más veces el mismo automóvil en los viajes que ha realizado
+CREATE PROCEDURE OSNR.TOP5ClientesConMayorCantidadDeMismoAutomovil
+@fecha_inicio datetime,
+@fecha_fin datetime
+AS
+	SELECT TOP 5
+		usu_nombre Nombre,
+		usu_apellido Apellido,
+		usu_dni DNI,
+		usu_telefono Telefono,
+		usu_mail Mail,
+		veh_patente Patente,
+		veh_licencia Licencia,
+		veh_rodado Rodado,
+		COUNT(via_id_vehiculo) CantidadVecesUtilizado
+	FROM OSNR.Cliente
+		JOIN OSNR.Viaje ON via_id_cliente=cli_id
+		JOIN OSNR.Usuario ON usu_id=cli_id_usuario
+		JOIN OSNR.Vehiculo ON veh_id=via_id_vehiculo
+	WHERE via_fecha between @fecha_inicio and @fecha_fin
+	GROUP BY cli_id, usu_nombre, usu_apellido, usu_dni, usu_telefono, usu_mail, via_id_vehiculo, veh_patente, veh_licencia, veh_rodado
+	ORDER BY CantidadVecesUtilizado DESC
+GO

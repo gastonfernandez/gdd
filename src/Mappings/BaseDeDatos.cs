@@ -15,17 +15,9 @@ namespace UberFrba.Mappings
     class BaseDeDatos
     {
 
-        private void BasedeDatos_Load(object sender, EventArgs e)
-        {
+        public SqlConnection conexion = new SqlConnection(Config.strConnection);
 
-        }
-
-        private SqlConnection conexion = new SqlConnection(Config.strConnection);
-
-        public void openConnection()
-        {
-            conexion.Open();
-        }
+        public void openConnection() { conexion.Open(); }
 
         public void closeConnection() { conexion.Close(); }
 
@@ -36,21 +28,16 @@ namespace UberFrba.Mappings
                 conexion.Open();
                 SqlCommand queryCommand = new SqlCommand(query, conexion);
                 SqlDataReader queryCommandReader = queryCommand.ExecuteReader();
-
                 conexion.Close();
-
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show(ex.Message + " Query: " + query);
-
             }
         }
 
         public DataTable select_query(String query)
         {
-
             try
             {
                 conexion.Open();
@@ -63,14 +50,16 @@ namespace UberFrba.Mappings
             }
             catch (Exception ex)
             {
-
                 MessageBox.Show(ex.Message + " Query: " + query);
-
             }
 
             return new DataTable();
         }
 
+        public DataTable ExecSPAndGetData(String spName, Dictionary<String, DbTypedValue> fields = null, Dictionary<int, String> errorMensaje = null, String ejecucionCorrecta = null)
+        {
+            return (DataTable)new SpExec(this, spName, fields, errorMensaje, ejecucionCorrecta).Exec();
+        }
 
     }
 }
