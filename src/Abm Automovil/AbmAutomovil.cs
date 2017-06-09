@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,7 @@ namespace autom
 {
     public partial class AbmAutomovil : Form
     {
+        private SqlConnection conexion = new SqlConnection(Config.strConnection);
 
         public AbmAutomovil()
         {
@@ -34,7 +36,6 @@ namespace autom
             foreach (DataRow row in dt.Rows)
                 lista.Add(new Combo(Convert.ToString(row["mar_nombre"]), Convert.ToInt32(row["mar_id"])));
             comboMarca.DisplayMember = "mar_id";
-            //lista.Add(new Combo("Chevrolet",1));//sacar
             comboMarca.ValueMember = "mar_nombre";
             comboMarca.DataSource = lista;
             comboMarca.SelectedItem = lista[0];
@@ -42,8 +43,9 @@ namespace autom
 
         public void BuscarVehiculos()
         {
-            listaConsulta.Items.Clear();
-            BaseDeDatos db = new BaseDeDatos();
+            //listaConsulta.Items.Clear();
+            BaseDeDatos db = new BaseDeDatos();//fijarse si no hay que sacarlo
+            conexion.Open();
 
             Combo marca = (Combo)comboMarca.SelectedItem;
 
@@ -56,40 +58,29 @@ namespace autom
             query += "where ";
             query += "mo.mod_nombre like '%" + txtModelo.Text + "%' ";
             query += "and (ma.mar_id= " + marca.Value + " or 0=" + marca.Value + ")";
-            //query += "and ma.mar_nombre like '%" + comboMarca.Text + "%' "; //revisar
             query += "and v.veh_patente like '%" + txtPatente.Text + "%' ";
             query += "and u.usu_nombre like '%" + txtChofer.Text + "%' ";
-            query += "order by veh_habilitado desc, veh_patente ";
+            query += "order by veh_habilitado desc, 1 ";
 
-            DataTable dt = db.select_query(query);
 
-            foreach (DataRow row in dt.Rows)
-            {
-                ListViewItem item = new ListViewItem(Convert.ToString(row["veh_id"]));//no deberia mostrarse
-                item.SubItems.Add(Convert.ToString(row["veh_patente"]));
-                item.SubItems.Add(Convert.ToString(row["mar_nombre"]));
-                item.SubItems.Add(Convert.ToString(row["mod_nombre"]));
-                item.SubItems.Add(Convert.ToString(row["usu_nombre"]));
-                item.SubItems.Add(Convert.ToByte(row["veh_habilitado"]) == 1 ? "Activo" : "Inactivo");
+            SqlDataAdapter daVehiculos = new SqlDataAdapter(query, conexion);
+            DataSet dsVehiculos = new DataSet();
+            daVehiculos.Fill(dsVehiculos, "vehiculo");
+            dgvVehiculos.DataSource = dsVehiculos;
+            dgvVehiculos.DataMember = "vehiculo";
 
-                listaConsulta.Items.Add(item);
-            }
+            //foreach (DataRow row in dt.Rows)
+            //{
+            //    ListViewItem item = new ListViewItem(Convert.ToString(row["veh_id"]));//no deberia mostrarse
+            //    item.SubItems.Add(Convert.ToString(row["veh_patente"]));
+            //    item.SubItems.Add(Convert.ToString(row["mar_nombre"]));
+            //    item.SubItems.Add(Convert.ToString(row["mod_nombre"]));
+            //    item.SubItems.Add(Convert.ToString(row["usu_nombre"]));
+            //    item.SubItems.Add(Convert.ToByte(row["veh_habilitado"]) == 1 ? "Activo" : "Inactivo");
 
-            //ListViewItem itme = new ListViewItem("1111111");
-            //itme.SubItems.Add("adfgadg");
-            //itme.SubItems.Add("adfgadg");
-            //itme.SubItems.Add("gadfgasdf");
-            //itme.SubItems.Add("gasdfgas");
-            //itme.SubItems.Add("Inactivo");
-            //listaConsulta.Items.Add(itme);
-
-            //ListViewItem assa = new ListViewItem("111");
-            //assa.SubItems.Add("adfvzxcvxcgadg");
-            //assa.SubItems.Add("adfvzdcxvzxgadg");
-            //assa.SubItems.Add("gadvzxcvfgasdf");
-            //assa.SubItems.Add("gazxcvsdfgas");
-            //assa.SubItems.Add("Activo");
-            //listaConsulta.Items.Add(assa);
+            //    listaConsulta.Items.Add(item);
+            //}
+            conexion.Close();
         }
 
         private void btnBuscar_Click(object sender, EventArgs e)
@@ -107,15 +98,15 @@ namespace autom
 
         private void btnBorrar_Click(object sender, EventArgs e)
         {
-            if (listaConsulta.SelectedItems.Count == 0)
+            if (dgvVehiculos.SelectedRows.Count == 0)
                 MessageBox.Show("Debe seleccionar un item de la lista");
 
-            foreach (ListViewItem item in listaConsulta.SelectedItems)
+            foreach (DataGridViewRow item in dgvVehiculos.SelectedRows)
             {
-                if(item.SubItems[5].Text == "Activo")
-                    eliminarVehiculo(Convert.ToInt64(item.Text));
-                else if (item.SubItems[5].Text == "Inactivo")
-                    MessageBox.Show("El Automovil ya se encuentra INACTIVO");
+                if ((Boolean)item.Cells[5].Value == true)
+                    eliminarVehiculo(Convert.ToInt64(item.Cells[0].Value));
+                else 
+                    MessageBox.Show("El Automovil ya se encuentra DESHABILITADO");
             }
             BuscarVehiculos();
         }
@@ -133,13 +124,6 @@ namespace autom
             }
         }
 
- 
-
- 
-
-
-
-     
     }
 
 }

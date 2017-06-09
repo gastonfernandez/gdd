@@ -5,7 +5,7 @@ using System.Text;
 
 namespace UberFrba
 {
-    class Combo
+    public class Combo
     {
          public string Name {get; set;}
     public int Value{get; set;}

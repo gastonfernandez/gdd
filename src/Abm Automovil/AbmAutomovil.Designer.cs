@@ -39,20 +39,15 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.comboMarca = new System.Windows.Forms.ComboBox();
-            this.listaConsulta = new System.Windows.Forms.ListView();
-            this.Id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Patente = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Marca = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Modelo = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Chofer = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Estado = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.altaVehiculo = new System.Windows.Forms.Button();
+            this.dgvVehiculos = new System.Windows.Forms.DataGridView();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvVehiculos)).BeginInit();
             this.SuspendLayout();
             // 
             // btnModificar
             // 
             this.btnModificar.BackColor = System.Drawing.Color.LimeGreen;
-            this.btnModificar.Location = new System.Drawing.Point(551, 206);
+            this.btnModificar.Location = new System.Drawing.Point(630, 262);
             this.btnModificar.Name = "btnModificar";
             this.btnModificar.Size = new System.Drawing.Size(93, 39);
             this.btnModificar.TabIndex = 25;
@@ -63,7 +58,7 @@
             // btnBorrar
             // 
             this.btnBorrar.BackColor = System.Drawing.Color.Red;
-            this.btnBorrar.Location = new System.Drawing.Point(551, 264);
+            this.btnBorrar.Location = new System.Drawing.Point(630, 320);
             this.btnBorrar.Name = "btnBorrar";
             this.btnBorrar.Size = new System.Drawing.Size(93, 39);
             this.btnBorrar.TabIndex = 24;
@@ -146,50 +141,10 @@
             this.comboMarca.Size = new System.Drawing.Size(121, 21);
             this.comboMarca.TabIndex = 15;
             // 
-            // listaConsulta
-            // 
-            this.listaConsulta.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.Id,
-            this.Patente,
-            this.Marca,
-            this.Modelo,
-            this.Chofer,
-            this.Estado});
-            this.listaConsulta.Location = new System.Drawing.Point(93, 206);
-            this.listaConsulta.Name = "listaConsulta";
-            this.listaConsulta.Size = new System.Drawing.Size(418, 97);
-            this.listaConsulta.TabIndex = 14;
-            this.listaConsulta.UseCompatibleStateImageBehavior = false;
-            this.listaConsulta.View = System.Windows.Forms.View.Details;
-            // 
-            // Id
-            // 
-            this.Id.Text = "Id";
-            // 
-            // Patente
-            // 
-            this.Patente.Text = "Patente";
-            // 
-            // Marca
-            // 
-            this.Marca.Text = "Marca";
-            // 
-            // Modelo
-            // 
-            this.Modelo.Text = "Modelo";
-            // 
-            // Chofer
-            // 
-            this.Chofer.Text = "Chofer";
-            // 
-            // Estado
-            // 
-            this.Estado.Text = "Estado";
-            // 
             // altaVehiculo
             // 
             this.altaVehiculo.BackColor = System.Drawing.SystemColors.MenuHighlight;
-            this.altaVehiculo.Location = new System.Drawing.Point(20, 351);
+            this.altaVehiculo.Location = new System.Drawing.Point(12, 432);
             this.altaVehiculo.Name = "altaVehiculo";
             this.altaVehiculo.Size = new System.Drawing.Size(134, 42);
             this.altaVehiculo.TabIndex = 13;
@@ -197,11 +152,25 @@
             this.altaVehiculo.UseVisualStyleBackColor = false;
             this.altaVehiculo.Click += new System.EventHandler(this.altaVehiculo_Click);
             // 
+            // dgvVehiculos
+            // 
+            this.dgvVehiculos.AllowUserToAddRows = false;
+            this.dgvVehiculos.AllowUserToDeleteRows = false;
+            this.dgvVehiculos.AllowUserToResizeColumns = false;
+            this.dgvVehiculos.AllowUserToResizeRows = false;
+            this.dgvVehiculos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvVehiculos.Location = new System.Drawing.Point(20, 193);
+            this.dgvVehiculos.Name = "dgvVehiculos";
+            this.dgvVehiculos.ReadOnly = true;
+            this.dgvVehiculos.Size = new System.Drawing.Size(588, 218);
+            this.dgvVehiculos.TabIndex = 26;
+            // 
             // AbmAutomovil
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(679, 412);
+            this.ClientSize = new System.Drawing.Size(821, 486);
+            this.Controls.Add(this.dgvVehiculos);
             this.Controls.Add(this.btnModificar);
             this.Controls.Add(this.btnBorrar);
             this.Controls.Add(this.btnBuscar);
@@ -213,10 +182,10 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboMarca);
-            this.Controls.Add(this.listaConsulta);
             this.Controls.Add(this.altaVehiculo);
             this.Name = "AbmAutomovil";
             this.Text = "Form1";
+            ((System.ComponentModel.ISupportInitialize)(this.dgvVehiculos)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,13 +204,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox comboMarca;
-        private System.Windows.Forms.ListView listaConsulta;
-        private System.Windows.Forms.ColumnHeader Id;
-        private System.Windows.Forms.ColumnHeader Patente;
-        private System.Windows.Forms.ColumnHeader Marca;
-        private System.Windows.Forms.ColumnHeader Modelo;
-        private System.Windows.Forms.ColumnHeader Chofer;
-        private System.Windows.Forms.ColumnHeader Estado;
         private System.Windows.Forms.Button altaVehiculo;
+        private System.Windows.Forms.DataGridView dgvVehiculos;
     }
 }

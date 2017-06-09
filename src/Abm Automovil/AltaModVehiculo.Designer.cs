@@ -34,11 +34,6 @@
             this.txtLicencia = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.listaChofer = new System.Windows.Forms.ListView();
-            this.Id = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Apellido = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Nombre = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.Login = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.label6 = new System.Windows.Forms.Label();
             this.btnGuardar = new System.Windows.Forms.Button();
             this.btnVolver = new System.Windows.Forms.Button();
@@ -46,11 +41,13 @@
             this.label5 = new System.Windows.Forms.Label();
             this.comboMarca = new System.Windows.Forms.ComboBox();
             this.txtPatente = new System.Windows.Forms.TextBox();
-            this.txtModelo = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.dgvChofer = new System.Windows.Forms.DataGridView();
+            this.comboModelo = new System.Windows.Forms.ComboBox();
+            ((System.ComponentModel.ISupportInitialize)(this.dgvChofer)).BeginInit();
             this.SuspendLayout();
             // 
             // label9
@@ -102,39 +99,6 @@
             this.label7.TabIndex = 33;
             this.label7.Text = "Licencia";
             // 
-            // listaChofer
-            // 
-            this.listaChofer.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.Id,
-            this.Apellido,
-            this.Nombre,
-            this.Login});
-            this.listaChofer.Location = new System.Drawing.Point(104, 167);
-            this.listaChofer.Name = "listaChofer";
-            this.listaChofer.Size = new System.Drawing.Size(301, 97);
-            this.listaChofer.TabIndex = 32;
-            this.listaChofer.UseCompatibleStateImageBehavior = false;
-            this.listaChofer.View = System.Windows.Forms.View.Details;
-            // 
-            // Id
-            // 
-            this.Id.Text = "Id";
-            // 
-            // Apellido
-            // 
-            this.Apellido.Text = "Apellido";
-            this.Apellido.Width = 82;
-            // 
-            // Nombre
-            // 
-            this.Nombre.Text = "Nombre";
-            this.Nombre.Width = 74;
-            // 
-            // Login
-            // 
-            this.Login.Text = "Login";
-            this.Login.Width = 83;
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -147,7 +111,7 @@
             // 
             // btnGuardar
             // 
-            this.btnGuardar.Location = new System.Drawing.Point(203, 334);
+            this.btnGuardar.Location = new System.Drawing.Point(217, 369);
             this.btnGuardar.Name = "btnGuardar";
             this.btnGuardar.Size = new System.Drawing.Size(111, 41);
             this.btnGuardar.TabIndex = 30;
@@ -169,7 +133,7 @@
             // comboTurno
             // 
             this.comboTurno.FormattingEnabled = true;
-            this.comboTurno.Location = new System.Drawing.Point(104, 297);
+            this.comboTurno.Location = new System.Drawing.Point(104, 168);
             this.comboTurno.Name = "comboTurno";
             this.comboTurno.Size = new System.Drawing.Size(131, 21);
             this.comboTurno.TabIndex = 28;
@@ -177,7 +141,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(47, 300);
+            this.label5.Location = new System.Drawing.Point(47, 171);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(39, 13);
             this.label5.TabIndex = 27;
@@ -199,17 +163,10 @@
             this.txtPatente.Size = new System.Drawing.Size(131, 20);
             this.txtPatente.TabIndex = 25;
             // 
-            // txtModelo
-            // 
-            this.txtModelo.Location = new System.Drawing.Point(104, 84);
-            this.txtModelo.Name = "txtModelo";
-            this.txtModelo.Size = new System.Drawing.Size(131, 20);
-            this.txtModelo.TabIndex = 24;
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(47, 167);
+            this.label4.Location = new System.Drawing.Point(47, 212);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(42, 13);
             this.label4.TabIndex = 23;
@@ -242,18 +199,35 @@
             this.label1.TabIndex = 20;
             this.label1.Text = "Marca*";
             // 
+            // dgvChofer
+            // 
+            this.dgvChofer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgvChofer.Location = new System.Drawing.Point(104, 212);
+            this.dgvChofer.Name = "dgvChofer";
+            this.dgvChofer.Size = new System.Drawing.Size(361, 131);
+            this.dgvChofer.TabIndex = 39;
+            // 
+            // comboModelo
+            // 
+            this.comboModelo.FormattingEnabled = true;
+            this.comboModelo.Location = new System.Drawing.Point(104, 84);
+            this.comboModelo.Name = "comboModelo";
+            this.comboModelo.Size = new System.Drawing.Size(131, 21);
+            this.comboModelo.TabIndex = 40;
+            // 
             // AltaModVehiculo
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(519, 514);
+            this.ClientSize = new System.Drawing.Size(562, 514);
+            this.Controls.Add(this.comboModelo);
+            this.Controls.Add(this.dgvChofer);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.comboActivo);
             this.Controls.Add(this.txtRodado);
             this.Controls.Add(this.txtLicencia);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.listaChofer);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.btnGuardar);
             this.Controls.Add(this.btnVolver);
@@ -261,13 +235,13 @@
             this.Controls.Add(this.label5);
             this.Controls.Add(this.comboMarca);
             this.Controls.Add(this.txtPatente);
-            this.Controls.Add(this.txtModelo);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "AltaModVehiculo";
             this.Text = "AltaModVehiculo";
+            ((System.ComponentModel.ISupportInitialize)(this.dgvChofer)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -281,11 +255,6 @@
         private System.Windows.Forms.TextBox txtLicencia;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.ListView listaChofer;
-        private System.Windows.Forms.ColumnHeader Id;
-        private System.Windows.Forms.ColumnHeader Apellido;
-        private System.Windows.Forms.ColumnHeader Nombre;
-        private System.Windows.Forms.ColumnHeader Login;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btnGuardar;
         private System.Windows.Forms.Button btnVolver;
@@ -293,10 +262,11 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox comboMarca;
         private System.Windows.Forms.TextBox txtPatente;
-        private System.Windows.Forms.TextBox txtModelo;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.DataGridView dgvChofer;
+        private System.Windows.Forms.ComboBox comboModelo;
     }
 }
