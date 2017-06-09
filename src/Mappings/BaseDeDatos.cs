@@ -20,7 +20,7 @@ namespace UberFrba.Mappings
 
         }
 
-        private SqlConnection conexion = new SqlConnection("Data Source=localhost\\SQLSERVER2012;Initial Catalog=GD1C2017;Integrated Security=true;UID=gd;PWD=gd2017");
+        private SqlConnection conexion = new SqlConnection(Config.strConnection);
 
         public void openConnection()
         {

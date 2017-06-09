@@ -33,6 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -68,6 +69,7 @@
     <Compile Include="Abm Turno\AbmTurno.Designer.cs">
       <DependentUpon>AbmTurno.cs</DependentUpon>
     </Compile>
+    <Compile Include="Config.cs" />
     <Compile Include="Pagina Principal\FormPrincipal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -133,6 +135,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Abm Rol\EditarRol.resx">
       <DependentUpon>EditarRol.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Listado Estadistico\ListadoEstadistico.resx">
+      <DependentUpon>ListadoEstadistico.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Pagina Principal\FormPrincipal.resx">
       <DependentUpon>FormPrincipal.cs</DependentUpon>
