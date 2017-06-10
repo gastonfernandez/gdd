@@ -51,7 +51,9 @@
     <Compile Include="Abm Automovil\AbmAutomovil.Designer.cs">
       <DependentUpon>AbmAutomovil.cs</DependentUpon>
     </Compile>
-    <Compile Include="Abm Automovil\AltaModVehiculo.cs" />
+    <Compile Include="Abm Automovil\AltaModVehiculo.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Abm Automovil\AltaModVehiculo.Designer.cs">
       <DependentUpon>AltaModVehiculo.cs</DependentUpon>
     </Compile>
@@ -120,12 +122,6 @@
     <Compile Include="Facturacion\FacturacionCliente.Designer.cs">
       <DependentUpon>FacturacionCliente.cs</DependentUpon>
     </Compile>
-    <Compile Include="Login.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Login.Designer.cs">
-      <DependentUpon>Login.cs</DependentUpon>
-    </Compile>
     <Compile Include="Listado Estadistico\ListadoEstadistico.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -193,6 +189,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Registro Viajes\RegistroViaje.resx">
       <DependentUpon>RegistroViaje.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Rendicion Viajes\RendicionViaje.resx">
+      <DependentUpon>RendicionViaje.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

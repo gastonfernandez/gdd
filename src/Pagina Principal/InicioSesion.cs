@@ -56,6 +56,10 @@ namespace UberFrba.Pagina_Principal
                             form.Enabled = true;
                             this.Hide();
                         }
+                        else if (usu.roles.Count() == 0)
+                        {
+                            throw new Exception("El usuario no tiene roles!!");
+                        }
                         else
                         {
                             usu.roles[0].seleccionado = true;

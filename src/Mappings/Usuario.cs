@@ -34,7 +34,7 @@ namespace UberFrba.Mappings
             #region ValidarUsuarioyPass Contra la base
             BaseDeDatos db = new BaseDeDatos();
 
-            DataTable dt = db.select_query("  select usu_id,usu_dni,usu_nombre,usu_apellido,usu_direccion ,usu_telefono,usu_mail,usu_fecha_nacimiento,usu_login,convert(varchar(2000),usu_password,2) as usu_password,usu_cantidad_intentos,usu_habilitado from [OSNR].USUARIO where usu_login= '" + login + "'");
+            DataTable dt = db.select_query("  select usu_id,usu_dni,usu_nombre,usu_apellido,usu_direccion ,usu_telefono,usu_mail,usu_fecha_nacimiento,usu_login,convert(varchar(2000),usu_password,2) as usu_password,usu_cantidad_intentos from [OSNR].USUARIO where usu_login= '" + login + "'");
 
             if (dt.Rows.Count > 1)
             {
@@ -65,12 +65,13 @@ namespace UberFrba.Mappings
                         this.username = Convert.ToString(row["usu_login"]);
                         this.pass = Convert.ToString(row["usu_password"]);
                         this.intentos = Convert.ToInt32(row["usu_cantidad_intentos"]);
-                        this.habilitado = Convert.ToInt32(row["usu_habilitado"]);
+                        this.habilitado = 1;// TODO Convert.ToInt32(row["usu_habilitado"]);
 
                     }
                 }
             }
 
+            // TODO esto no va mas aca, deberia ir en rol
             if (this.habilitado == 0)
             {
                 throw new Exception("El usuario se encuentra bloqueado");
@@ -97,8 +98,9 @@ namespace UberFrba.Mappings
 
                 #region ModificarValor en base a lo procesado
                 string update = "update [OSNR].usuario " +
-                                 " set usu_cantidad_intentos= " + this.intentos + "," +
-                                 "usu_habilitado= " + this.habilitado +
+                                 " set usu_cantidad_intentos= " + this.intentos + 
+                                 //"," +
+                               // TODO  "usu_habilitado= " + this.habilitado +
                                  " where usu_id= " + this.Id;
                 db.query(update);
                 #endregion

@@ -169,7 +169,7 @@ CREATE TABLE OSNR.Vehiculo (
 	veh_id int IDENTITY(1,1) PRIMARY KEY,
 	veh_id_modelo int REFERENCES OSNR.Modelo NOT NULL,
 	veh_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
-	veh_patente nvarchar(255) NOT NULL,
+	veh_patente nvarchar(255) UNIQUE NOT NULL,
 	veh_licencia nvarchar(255) NOT NULL,
 	veh_rodado nvarchar(255) NOT NULL,
 	veh_habilitado bit DEFAULT 1 NOT NULL
@@ -189,16 +189,19 @@ CREATE TABLE OSNR.Viaje (
 	via_fecha datetime NOT NULL,
 	via_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
 	via_id_cliente int REFERENCES OSNR.Cliente NOT NULL,
-	via_id_vehiculo int REFERENCES OSNR.Vehiculo NOT NULL
+	via_id_vehiculo int REFERENCES OSNR.Vehiculo NOT NULL,
+	via_id_turno int REFERENCES OSNR.Turno NOT NULL
 	)
 GO
 
 CREATE TABLE OSNR.Rendicion (
 	ren_id int IDENTITY(1,1) PRIMARY KEY,
-	ren_numero int NOT NULL,
-	ren_fecha datetime NOT NULL,
+	ren_numero int NOT NULL UNIQUE,
 	ren_importe numeric(18,2) NOT NULL,
-	ren_id_chofer int REFERENCES OSNR.Chofer NOT NULL
+	ren_fecha date NOT NULL,
+	ren_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
+	ren_id_turno int REFERENCES OSNR.Turno NOT NULL
+	CONSTRAINT [UQ_Rendicion] UNIQUE (ren_fecha, ren_id_chofer, ren_id_turno)
 	)
 GO
 
@@ -338,6 +341,13 @@ INSERT INTO OSNR.Usuario
 	FROM gd_esquema.Maestra
 GO
 
+-- Seteo el rol de cada chofer
+INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
+	SELECT DISTINCT
+		usu_id,	1
+	FROM gd_esquema.Maestra JOIN OSNR.Usuario on usu_telefono = Chofer_Telefono
+GO
+
 INSERT INTO OSNR.Usuario
 	SELECT DISTINCT
 		Cliente_Dni,
@@ -352,7 +362,12 @@ INSERT INTO OSNR.Usuario
 		0 --Intentos login
 	FROM gd_esquema.Maestra
 GO
-
+-- Seteo el rol de cada cliente
+INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
+	SELECT DISTINCT
+		usu_id,	1
+	FROM gd_esquema.Maestra JOIN OSNR.Usuario on usu_telefono = Cliente_Telefono
+GO
 
 /* Chofer */
 INSERT INTO OSNR.Chofer
@@ -407,19 +422,21 @@ GO
 
 /* Viaje */
 INSERT INTO OSNR.Viaje
-(via_cantidad_km,via_fecha,via_id_chofer,via_id_cliente,via_id_vehiculo)
+	(via_cantidad_km,via_fecha,via_id_chofer,via_id_cliente,via_id_vehiculo,via_id_turno)
 	SELECT DISTINCT Viaje_Cant_Kilometros, 
 					Viaje_Fecha, 
 					ch.cho_id, 
 					c.cli_id, 
-					v.veh_id	 
+					v.veh_id,
+					tur_id
 	FROM gd_esquema.Maestra	mas
-		 join OSNR.Usuario uc on uc.usu_dni = Cliente_Dni  
+		 join OSNR.Usuario uc on uc.usu_dni = Cliente_Dni
 		 join OSNR.Cliente c on cli_id_usuario = uc.usu_id
 	     join OSNR.Vehiculo v on veh_patente = Auto_Patente
-   		 join OSNR.Usuario uch on uch.usu_dni = Chofer_Dni  
+   		 join OSNR.Usuario uch on uch.usu_dni = Chofer_Dni
 		 join OSNR.Chofer ch on ch.cho_id_usuario=uch.usu_id
-	WHERE Viaje_Cant_Kilometros IS NOT NULL
+		 JOIN OSNR.Turno ON tur_descripcion = Turno_Descripcion
+	WHERE Viaje_Cant_Kilometros IS NOT NULL AND Rendicion_Nro IS NOT NULL
 GO
 
 /* Factura */
@@ -456,19 +473,36 @@ INSERT INTO OSNR.FacturaViaje
 GO
 
 /* Rendicion */
-insert into OSNR.Rendicion
-(ren_numero,ren_fecha,ren_importe,ren_id_chofer)
-	select distinct mas.Rendicion_Nro,
-			mas.Rendicion_Fecha,
-			mas.Rendicion_Importe,
-			ch.cho_id
-	from	gd_esquema.Maestra mas
-			join OSNR.Usuario uch on uch.usu_dni = mas.Chofer_Dni
-			join OSNR.Chofer ch on ch.cho_id_usuario=uch.usu_id
-	where	mas.Rendicion_Nro is not null	     			
+
+INSERT INTO OSNR.Rendicion
+	SELECT DISTINCT 
+		mas.Rendicion_Nro,
+		SUM(mas.Rendicion_Importe), -- El importe de la rendicion es la suma de todos los viajes que la componen
+		mas.Rendicion_Fecha,
+		cho_id,
+		tur_id
+	FROM	gd_esquema.Maestra mas
+			JOIN OSNR.Usuario uch on uch.usu_dni = mas.Chofer_Dni
+			JOIN OSNR.Chofer ch on ch.cho_id_usuario=uch.usu_id
+			JOIN OSNR.Turno ON tur_descripcion=mas.Turno_Descripcion
+	WHERE	mas.Rendicion_Nro is not null
+	GROUP BY mas.Rendicion_Nro, mas.Rendicion_Fecha, cho_id, tur_id
 GO
 
-	
+INSERT INTO OSNR.RendicionViaje
+	(renvia_id_rendicion, renvia_id_viaje, renvia_porcentaje)
+	SELECT DISTINCT 
+		ren_id,
+		via_id,
+		30 --El calculo nos dio que todos los registros guardados tienen 30 %
+	FROM	gd_esquema.Maestra
+			join OSNR.Rendicion ON ren_numero=Rendicion_Nro
+			join OSNR.Viaje ON via_cantidad_km=Viaje_Cant_Kilometros
+							AND via_fecha=Viaje_Fecha
+							AND via_id_chofer=ren_id_chofer
+	WHERE	Rendicion_Nro IS NOT NULL     			
+GO
+
 /*****************************************************************/
 /*********************** Stored Procedures ***********************/
 /*****************************************************************/
@@ -598,53 +632,52 @@ CREATE PROCEDURE OSNR.ModificarOCrearCliente
 @Nombre varchar(255), @Apellido varchar(255), @Dni numeric(18,0),
 @Direccion varchar(255), @Telefono numeric(18,0), @Email varchar(255), @FechaNac datetime
 AS
+	DECLARE @usuarioId INT
+	SELECT @usuarioId = cli_id_usuario FROM OSNR.Cliente WHERE cli_id = @clienteId
 
-DECLARE @usuarioId INT
-SELECT @usuarioId = cli_id_usuario FROM OSNR.Cliente WHERE cli_id = @clienteId
+	IF (@usuarioId IS NULL) 
+		BEGIN
+			INSERT INTO OSNR.Usuario 
+			(
+				usu_nombre,
+				usu_apellido, 
+				usu_dni, 
+				usu_direccion, 
+				usu_telefono,
+				usu_mail, 
+				usu_fecha_nacimiento, 
+				usu_login, 
+				usu_password
+			) 
+			VALUES (
+				@Nombre, 
+				@Apellido, 
+				@Dni, 
+				@Direccion,
+				@Telefono,
+				@Email,
+				@FechaNac, 
+				CONVERT(VARCHAR(18), @Telefono),
+				HASHBYTES('SHA2_256', CONVERT(VARCHAR(18), @Telefono))
+			)
 
-IF (@usuarioId IS NULL) 
-	BEGIN
-		INSERT INTO OSNR.Usuario 
-		(
-			usu_nombre,
-			usu_apellido, 
-			usu_dni, 
-			usu_direccion, 
-			usu_telefono,
-			usu_mail, 
-			usu_fecha_nacimiento, 
-			usu_login, 
-			usu_password
-		) 
-		VALUES (
-			@Nombre, 
-			@Apellido, 
-			@Dni, 
-			@Direccion,
-			@Telefono,
-			@Email,
-			@FechaNac, 
-			CONVERT(VARCHAR(18), @Telefono),
-			HASHBYTES('SHA2_256', CONVERT(VARCHAR(18), @Telefono))
-		)
-
-		SET @usuarioId = @@IDENTITY
-		INSERT INTO OSNR.Cliente (cli_id_usuario) VALUES (@usuarioId)
-		INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
-			values(@usuarioId, 2)
-	END
-ELSE
-	BEGIN
-		UPDATE OSNR.Usuario 
-		SET 
-			usu_nombre = @Nombre,
-			usu_apellido = @Apellido,
-			usu_dni = @Dni,
-			usu_direccion = @Direccion, 
-			usu_telefono = @Telefono,
-			usu_mail = @Email,
-			usu_fecha_nacimiento = @FechaNac
-		WHERE usu_id = @usuarioId
-	END
+			SET @usuarioId = @@IDENTITY
+			INSERT INTO OSNR.Cliente (cli_id_usuario) VALUES (@usuarioId)
+			INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
+				values(@usuarioId, 2)
+		END
+	ELSE
+		BEGIN
+			UPDATE OSNR.Usuario 
+			SET 
+				usu_nombre = @Nombre,
+				usu_apellido = @Apellido,
+				usu_dni = @Dni,
+				usu_direccion = @Direccion, 
+				usu_telefono = @Telefono,
+				usu_mail = @Email,
+				usu_fecha_nacimiento = @FechaNac
+			WHERE usu_id = @usuarioId
+		END
 GO
 

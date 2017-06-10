@@ -11,5 +11,6 @@ namespace UberFrba
     {
         public static string strConnection = ConfigurationManager.ConnectionStrings["ConexionSQL"].ConnectionString;
         public static DateTime fecha = DateTime.Parse(ConfigurationManager.AppSettings["Fecha"]);
+        public static int porcentajeRendicion = int.Parse(ConfigurationManager.AppSettings["PorcentajeRendiciones"]);
     }
 }
