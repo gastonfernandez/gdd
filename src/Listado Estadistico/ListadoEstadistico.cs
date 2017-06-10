@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using UberFrba.Mappings;
 
 namespace UberFrba.Listado_Estadistico
 {
@@ -14,8 +15,7 @@ namespace UberFrba.Listado_Estadistico
     {
 
         private Dictionary<int, String> mapIndicesNombresSP = new Dictionary<int, string>();
-        //private Dictionary<String,BaseDeDatos.ValorTipo> datosListadoActual = new Dictionary<String,gdDataBase.ValorTipo>();
-        int indiceListadoActual;
+        private Dictionary<String, DbTypedValue> filtroFechas = new Dictionary<String, DbTypedValue>();
 
         public ListadoEstadistico()
         {
@@ -25,113 +25,63 @@ namespace UberFrba.Listado_Estadistico
             comboBoxAño.DataSource = yearList;
             comboBoxAño.SelectedIndex = 2;
 
-            mapIndicesNombresSP.Add(0,"[ÑUFLO].TOP5ChoferesConMayorRecaudacion");
-            mapIndicesNombresSP.Add(1,"[Ñuflo].TOP5ChoferesConViajeMasLargo");
-            mapIndicesNombresSP.Add(2,"[ÑUFLO].TOP5ClientesConMayorConsumo");
-            mapIndicesNombresSP.Add(3,"[ÑUFLO].TOP5ClientesConMayorCantidadDeMismoAutomovil");
+            mapIndicesNombresSP.Add(0, "[OSNR].TOP5ChoferesConMayorRecaudacion");
+            mapIndicesNombresSP.Add(1, "[OSNR].TOP5ChoferesConViajeMasLargo");
+            mapIndicesNombresSP.Add(2, "[OSNR].TOP5ClientesConMayorConsumo");
+            mapIndicesNombresSP.Add(3, "[OSNR].TOP5ClientesConMayorCantidadDeMismoAutomovil");
             comboBoxListado.SelectedIndex = 0;
-            
-        //    datosListadoActual.Add("id",new gdDataBase.ValorTipo());
-         //   datosListadoActual.Add("fecha_inicio",new gdDataBase.ValorTipo());
-          //  datosListadoActual.Add("fecha_fin", new gdDataBase.ValorTipo());
+
+            filtroFechas.Add("fecha_inicio", null);
+            filtroFechas.Add("fecha_fin", null);
         }
 
-        private void toolStripContainer1_TopToolStripPanel_Click(object sender, EventArgs e)
+        private DateTime calcularFecha(int anio, int trimestre)
         {
-
+            return new DateTime(anio, (trimestre - 1) * 3 + 1, 1);
         }
 
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        private int trimestre()
         {
-            
+            if (radioButtonQ1.Checked) return 1;
+            if (radioButtonQ2.Checked) return 2;
+            if (radioButtonQ3.Checked) return 3;
+            if (radioButtonQ4.Checked) return 4;
+            throw new Exception("Seleccione Trimestre");
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private int anio()
         {
-
-        }
-
-        private DateTime calcularFecha(int anio, int semestre)
-        {
-            return new DateTime(anio, semestre * 6 + 1, 1);
-        }
-
-        private int semestre()
-        {
-            if (radioButtonQ1.Checked) return 0;
-            else return 1;
-        }
-
-        private int anio() {
             return Convert.ToInt32(comboBoxAño.SelectedValue);
         }
 
-        private DateTime fechaInicial(){
-            return calcularFecha(this.anio(), this.semestre());
+        private DateTime fechaInicial()
+        {
+            return calcularFecha(this.anio(), this.trimestre());
         }
+
         private DateTime fechaFinal()
         {
-            return fechaInicial().AddMonths(6);
+            return fechaInicial().AddMonths(3);
         }
 
-        
         private void button1_Click(object sender, EventArgs e)
         {
-         /*   dataGridView1.DataSource = null;
+            dataGridView1.DataSource = null;
             var fecha_inicio = fechaInicial().Date.ToString("yyyy-MM-dd HH:mm:ss.000");
             var fecha_fin = fechaFinal().Date.ToString("yyyy-MM-dd HH:mm:ss.000");
-            datosListadoActual["fecha_inicio"] = new gdDataBase.ValorTipo(fecha_inicio, SqlDbType.DateTime);
-            datosListadoActual["fecha_fin"] = new gdDataBase.ValorTipo(fecha_fin, SqlDbType.DateTime);
-            indiceListadoActual = comboBoxListado.SelectedIndex;
-            var nombre_sp = mapIndicesNombresTop5[comboBoxListado.SelectedIndex];
-            Dictionary<String, gdDataBase.ValorTipo> camposValores = new Dictionary<string, gdDataBase.ValorTipo>();
+            filtroFechas["fecha_inicio"] = new DbTypedValue(fecha_inicio, SqlDbType.DateTime);
+            filtroFechas["fecha_fin"] = new DbTypedValue(fecha_fin, SqlDbType.DateTime);
+            var nombre_sp = mapIndicesNombresSP[comboBoxListado.SelectedIndex];
+
             Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
+            dataGridView1.DataSource = new BaseDeDatos().ExecSPAndGetData(nombre_sp, filtroFechas, errorMensaje);
 
-            camposValores.Add("fecha_inicio", new gdDataBase.ValorTipo(fecha_inicio, SqlDbType.DateTime));
-            camposValores.Add("fecha_fin", new gdDataBase.ValorTipo(fecha_fin, SqlDbType.DateTime));
-            errorMensaje.Add(2627, "Ingresó una matrícula de aeronave ya registrada. Intente nuevamente...");
-
-            dataGridViewListado.DataSource = new gdDataBase().ExecAndGetData(nombre_sp, camposValores, errorMensaje);
-
-            this.dataGridViewListado_RowEnter(sender, new DataGridViewCellEventArgs(0,0));
-            */
         }
          
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void actualizarDetalle(DataGridViewCellEventArgs e)
-        {/*
-            DataGridViewRow filaSeleccionada;
-            if (dataGridViewListado.Rows.Count == 0) return;
-            filaSeleccionada = dataGridViewListado.Rows[e.RowIndex];
-            datosListadoActual["id"] = new gdDataBase.ValorTipo(filaSeleccionada.Cells[0].Value, SqlDbType.NVarChar);
-            var camposValores = gdDataBase.newParameters();
-            camposValores.Add("id", datosListadoActual["id"]);
-            camposValores.Add("fecha_inicio", datosListadoActual["fecha_inicio"]);
-            camposValores.Add("fecha_fin", datosListadoActual["fecha_fin"]);
-            dataGridView1.DataSource = new gdDataBase().ExecAndGetData(mapIndicesDetallesTop5[indiceListadoActual], camposValores); 
-          * */
-        }
-
-        private void dataGridViewListado_RowEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            actualizarDetalle(e);
-        }
-
         private void comboBoxListado_SelectionChangeCommitted(object sender, EventArgs e)
         {
             dataGridView1.DataSource = null;
         }
-
-        private void FormListadoEstadistico_Load(object sender, EventArgs e)
-        {
-
-        }
-
 
     }
 }

@@ -30,6 +30,8 @@
         {
             this.components = new System.ComponentModel.Container();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioButtonQ4 = new System.Windows.Forms.RadioButton();
+            this.radioButtonQ3 = new System.Windows.Forms.RadioButton();
             this.label4 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.comboBoxAño = new System.Windows.Forms.ComboBox();
@@ -41,8 +43,6 @@
             this.comboBoxListado = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.bindingSourceListado = new System.Windows.Forms.BindingSource(this.components);
-            this.radioButtonQ3 = new System.Windows.Forms.RadioButton();
-            this.radioButtonQ4 = new System.Windows.Forms.RadioButton();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSourceListado)).BeginInit();
@@ -67,8 +67,27 @@
             this.groupBox1.Size = new System.Drawing.Size(1048, 460);
             this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Top 5 Estadisticos";
-            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            this.groupBox1.Text = "Top 5";
+            // 
+            // radioButtonQ4
+            // 
+            this.radioButtonQ4.AutoSize = true;
+            this.radioButtonQ4.Location = new System.Drawing.Point(315, 121);
+            this.radioButtonQ4.Name = "radioButtonQ4";
+            this.radioButtonQ4.Size = new System.Drawing.Size(39, 17);
+            this.radioButtonQ4.TabIndex = 14;
+            this.radioButtonQ4.Text = "Q4";
+            this.radioButtonQ4.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonQ3
+            // 
+            this.radioButtonQ3.AutoSize = true;
+            this.radioButtonQ3.Location = new System.Drawing.Point(252, 121);
+            this.radioButtonQ3.Name = "radioButtonQ3";
+            this.radioButtonQ3.Size = new System.Drawing.Size(39, 17);
+            this.radioButtonQ3.TabIndex = 13;
+            this.radioButtonQ3.Text = "Q3";
+            this.radioButtonQ3.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -164,7 +183,6 @@
             this.comboBoxListado.Name = "comboBoxListado";
             this.comboBoxListado.Size = new System.Drawing.Size(894, 21);
             this.comboBoxListado.TabIndex = 3;
-            this.comboBoxListado.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             this.comboBoxListado.SelectionChangeCommitted += new System.EventHandler(this.comboBoxListado_SelectionChangeCommitted);
             // 
             // label1
@@ -176,26 +194,6 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Año";
             // 
-            // radioButtonQ3
-            // 
-            this.radioButtonQ3.AutoSize = true;
-            this.radioButtonQ3.Location = new System.Drawing.Point(252, 121);
-            this.radioButtonQ3.Name = "radioButtonQ3";
-            this.radioButtonQ3.Size = new System.Drawing.Size(39, 17);
-            this.radioButtonQ3.TabIndex = 13;
-            this.radioButtonQ3.Text = "Q3";
-            this.radioButtonQ3.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonQ4
-            // 
-            this.radioButtonQ4.AutoSize = true;
-            this.radioButtonQ4.Location = new System.Drawing.Point(315, 121);
-            this.radioButtonQ4.Name = "radioButtonQ4";
-            this.radioButtonQ4.Size = new System.Drawing.Size(39, 17);
-            this.radioButtonQ4.TabIndex = 14;
-            this.radioButtonQ4.Text = "Q4";
-            this.radioButtonQ4.UseVisualStyleBackColor = true;
-            // 
             // ListadoEstadistico
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -205,7 +203,6 @@
             this.Name = "ListadoEstadistico";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Listado Estadistico";
-            this.Load += new System.EventHandler(this.FormListadoEstadistico_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
