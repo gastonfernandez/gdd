@@ -35,9 +35,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.btCargarChofer = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.label11 = new System.Windows.Forms.Label();
@@ -114,32 +111,14 @@
             // 
             // shapeContainer1
             // 
-            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
-            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape2,
-            this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(923, 741);
-            this.shapeContainer1.TabIndex = 16;
-            this.shapeContainer1.TabStop = false;
             // 
             // lineShape2
             // 
-            this.lineShape2.Name = "lineShape2";
-            this.lineShape2.X1 = 48;
-            this.lineShape2.X2 = 880;
-            this.lineShape2.Y1 = 474;
-            this.lineShape2.Y2 = 474;
+            
             // 
             // lineShape1
             // 
-            this.lineShape1.Name = "lineShape1";
-            this.lineShape1.X1 = 45;
-            this.lineShape1.X2 = 877;
-            this.lineShape1.Y1 = 315;
-            this.lineShape1.Y2 = 315;
-            // 
+        
             // btCargarChofer
             // 
             this.btCargarChofer.Location = new System.Drawing.Point(82, 263);
@@ -282,7 +261,6 @@
             this.Controls.Add(this.tbApellido);
             this.Controls.Add(this.tbDni);
             this.Controls.Add(this.tbNombre);
-            this.Controls.Add(this.shapeContainer1);
             this.Name = "RegistroViaje";
             this.Text = "Registro Viajes";
             this.Load += new System.EventHandler(this.RegistroViaje_Load);
@@ -302,8 +280,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label6;
-        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
-        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private System.Windows.Forms.Button btCargarChofer;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label11;
@@ -312,7 +288,6 @@
         private System.Windows.Forms.TextBox tbApellidoCliente;
         private System.Windows.Forms.TextBox tbDniCliente;
         private System.Windows.Forms.TextBox tbNombreCliente;
-        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.DataGridView dgvChofer;
         private System.Windows.Forms.DataGridView dgvCliente;
