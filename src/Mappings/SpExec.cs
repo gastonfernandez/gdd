@@ -81,10 +81,34 @@ namespace UberFrba.Mappings
                 MessageBox.Show(msgEjecucionCorrecta);
         }
 
-        public object Exec()
+        public void Exec()
         {
             db.openConnection();
+            using (var cmd = new SqlCommand(spName, db.conexion))
+            using (var da = new SqlDataAdapter(cmd))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
 
+                agregarParametrosAComando(cmd);
+
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                    mostrarResultadoEjecucionCorrecta();
+                }
+                catch (SqlException exception)
+                {
+                    excepcionAtrapada = exception;
+                    mostrarErrorSqlProducido();
+                }
+            }
+
+            db.closeConnection();
+        }
+
+        public DataTable ExecAndGetDataTable()
+        {
+            db.openConnection();
             DataTable ds = new DataTable();
 
             using (var cmd = new SqlCommand(spName, db.conexion))
@@ -108,8 +132,8 @@ namespace UberFrba.Mappings
             }
 
             db.closeConnection();
-
             return ds;
         }
+        
     }
 }

@@ -175,7 +175,7 @@
             this.comboBoxListado.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxListado.ImeMode = System.Windows.Forms.ImeMode.Off;
             this.comboBoxListado.Items.AddRange(new object[] {
-            "Chóferes con mayor recaudación",
+            "Choferes con mayor recaudación",
             "Choferes con el viaje más largo realizado",
             "Clientes con mayor consumo",
             "Cliente que utilizo más veces el mismo automóvil en los viajes que ha realizado"});

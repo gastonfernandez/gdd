@@ -11,11 +11,13 @@ using UberFrba.Abm_Turno;
 using UberFrba.Abm_Rol;
 using UberFrba.Mappings;
 using UberFrba.Pagina_Principal;
-using UberFrba.Registro_Viajes;
+//using UberFrba.Registro_Viajes;
 using UberFrba.Rendicion_Viajes;
 using UberFrba.Facturacion;
 using UberFrba.Listado_Estadistico;
 using autom;
+using UberFrba.Abm_Cliente;
+using UberFrba.Abm_Chofer;
 
 namespace UberFrba
 {
@@ -108,12 +110,12 @@ namespace UberFrba
 
         private void aBMClienteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-          // TODO abrirFormulario(new AbmCliente());
+            abrirFormulario(new AbmCliente());
         }
 
         private void aBMChoferToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           // TODO abrirFormulario(new AbmChofer());
+            abrirFormulario(new AbmChofer());
         }
 
         private void aBMAutomovilToolStripMenuItem_Click(object sender, EventArgs e)
@@ -128,7 +130,7 @@ namespace UberFrba
 
         private void registroDeViajeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            abrirFormulario(new RegistroViaje());
+           // abrirFormulario(new RegistroViaje());
         }
 
         private void rendicionDeViajeToolStripMenuItem_Click(object sender, EventArgs e)

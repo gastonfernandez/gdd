@@ -1,6 +1,6 @@
-namespace UberFrba.Abm_Chofer
+namespace UberFrba.Abm_Cliente
 {
-    partial class FormChofer
+    partial class AbmCliente
     {
         /// <summary>
         /// Required designer variable.
@@ -41,8 +41,6 @@ namespace UberFrba.Abm_Chofer
             this.txtNombre = new System.Windows.Forms.TextBox();
             this.lblApellido = new System.Windows.Forms.Label();
             this.lblNombre = new System.Windows.Forms.Label();
-            this.txtChofer = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -56,57 +54,58 @@ namespace UberFrba.Abm_Chofer
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(60, 191);
+            this.dataGridView1.Location = new System.Drawing.Point(88, 212);
             this.dataGridView1.MultiSelect = false;
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dataGridView1.ShowEditingIcon = false;
-            this.dataGridView1.Size = new System.Drawing.Size(632, 158);
-            this.dataGridView1.TabIndex = 7;
+            this.dataGridView1.Size = new System.Drawing.Size(869, 158);
+            this.dataGridView1.TabIndex = 13;
             // 
             // btnEliminar
             // 
             this.btnEliminar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnEliminar.Enabled = false;
             this.btnEliminar.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEliminar.Location = new System.Drawing.Point(542, 355);
+            this.btnEliminar.Location = new System.Drawing.Point(807, 376);
             this.btnEliminar.Name = "btnEliminar";
             this.btnEliminar.Size = new System.Drawing.Size(150, 32);
-            this.btnEliminar.TabIndex = 11;
+            this.btnEliminar.TabIndex = 16;
             this.btnEliminar.Text = "Eliminar";
             this.btnEliminar.UseVisualStyleBackColor = true;
+            this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
             // 
             // btnEditar
             // 
             this.btnEditar.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btnEditar.Enabled = false;
             this.btnEditar.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEditar.Location = new System.Drawing.Point(224, 355);
+            this.btnEditar.Location = new System.Drawing.Point(370, 376);
             this.btnEditar.Name = "btnEditar";
             this.btnEditar.Size = new System.Drawing.Size(150, 32);
-            this.btnEditar.TabIndex = 9;
+            this.btnEditar.TabIndex = 15;
             this.btnEditar.Text = "Editar";
             this.btnEditar.UseVisualStyleBackColor = true;
+            this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
             // 
             // btnAñadir
             // 
             this.btnAñadir.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnAñadir.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAñadir.Location = new System.Drawing.Point(61, 355);
+            this.btnAñadir.Location = new System.Drawing.Point(89, 376);
             this.btnAñadir.Name = "btnAñadir";
             this.btnAñadir.Size = new System.Drawing.Size(150, 32);
-            this.btnAñadir.TabIndex = 8;
+            this.btnAñadir.TabIndex = 14;
             this.btnAñadir.Text = "Añadir";
             this.btnAñadir.UseVisualStyleBackColor = true;
+            this.btnAñadir.Click += new System.EventHandler(this.btnAñadir_Click);
             // 
             // panel1
             // 
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.txtChofer);
-            this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.btnBuscar);
             this.panel1.Controls.Add(this.btnLimpiar);
             this.panel1.Controls.Add(this.txtDni);
@@ -115,10 +114,10 @@ namespace UberFrba.Abm_Chofer
             this.panel1.Controls.Add(this.txtNombre);
             this.panel1.Controls.Add(this.lblApellido);
             this.panel1.Controls.Add(this.lblNombre);
-            this.panel1.Location = new System.Drawing.Point(60, 53);
+            this.panel1.Location = new System.Drawing.Point(88, 74);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(632, 132);
-            this.panel1.TabIndex = 6;
+            this.panel1.Size = new System.Drawing.Size(869, 132);
+            this.panel1.TabIndex = 12;
             // 
             // btnBuscar
             // 
@@ -130,12 +129,13 @@ namespace UberFrba.Abm_Chofer
             this.btnBuscar.TabIndex = 5;
             this.btnBuscar.Text = "Buscar";
             this.btnBuscar.UseVisualStyleBackColor = true;
+            this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click_1);
             // 
             // btnLimpiar
             // 
             this.btnLimpiar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnLimpiar.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnLimpiar.Location = new System.Drawing.Point(327, 89);
+            this.btnLimpiar.Location = new System.Drawing.Point(564, 89);
             this.btnLimpiar.Name = "btnLimpiar";
             this.btnLimpiar.Size = new System.Drawing.Size(283, 31);
             this.btnLimpiar.TabIndex = 6;
@@ -146,7 +146,7 @@ namespace UberFrba.Abm_Chofer
             // 
             this.txtDni.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.txtDni.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDni.Location = new System.Drawing.Point(425, 17);
+            this.txtDni.Location = new System.Drawing.Point(662, 17);
             this.txtDni.MaxLength = 18;
             this.txtDni.Name = "txtDni";
             this.txtDni.Size = new System.Drawing.Size(182, 23);
@@ -157,7 +157,7 @@ namespace UberFrba.Abm_Chofer
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(323, 17);
+            this.label1.Location = new System.Drawing.Point(560, 17);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(96, 19);
             this.label1.TabIndex = 2;
@@ -172,7 +172,6 @@ namespace UberFrba.Abm_Chofer
             this.txtApellido.Name = "txtApellido";
             this.txtApellido.Size = new System.Drawing.Size(182, 23);
             this.txtApellido.TabIndex = 1;
-            this.txtApellido.TextChanged += new System.EventHandler(this.txtApellido_TextChanged);
             // 
             // txtNombre
             // 
@@ -183,7 +182,6 @@ namespace UberFrba.Abm_Chofer
             this.txtNombre.Name = "txtNombre";
             this.txtNombre.Size = new System.Drawing.Size(182, 23);
             this.txtNombre.TabIndex = 0;
-            this.txtNombre.TextChanged += new System.EventHandler(this.txtNombre_TextChanged);
             // 
             // lblApellido
             // 
@@ -195,7 +193,6 @@ namespace UberFrba.Abm_Chofer
             this.lblApellido.Size = new System.Drawing.Size(73, 19);
             this.lblApellido.TabIndex = 0;
             this.lblApellido.Text = "Apellido:";
-            this.lblApellido.Click += new System.EventHandler(this.lblApellido_Click);
             // 
             // lblNombre
             // 
@@ -207,43 +204,20 @@ namespace UberFrba.Abm_Chofer
             this.lblNombre.Size = new System.Drawing.Size(72, 19);
             this.lblNombre.TabIndex = 0;
             this.lblNombre.Text = "Nombre:";
-            this.lblNombre.Click += new System.EventHandler(this.lblNombre_Click);
             // 
-            // txtChofer
-            // 
-            this.txtChofer.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.txtChofer.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtChofer.Location = new System.Drawing.Point(425, 50);
-            this.txtChofer.MaxLength = 18;
-            this.txtChofer.Name = "txtChofer";
-            this.txtChofer.Size = new System.Drawing.Size(182, 23);
-            this.txtChofer.TabIndex = 8;
-            // 
-            // label2
-            // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(323, 50);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(82, 19);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Id Chofer:";
-            // 
-            // FormChofer
+            // AbmCliente
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
-            this.ClientSize = new System.Drawing.Size(753, 441);
+            this.ClientSize = new System.Drawing.Size(1045, 482);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.btnEliminar);
             this.Controls.Add(this.btnEditar);
             this.Controls.Add(this.btnAñadir);
             this.Controls.Add(this.panel1);
-            this.Name = "FormChofer";
-            this.Text = "ABM Choferes";
-            this.Load += new System.EventHandler(this.FormChofer_Load);
+            this.Name = "AbmCliente";
+            this.Text = "ABM Cliente";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
@@ -266,7 +240,6 @@ namespace UberFrba.Abm_Chofer
         private System.Windows.Forms.TextBox txtNombre;
         private System.Windows.Forms.Label lblApellido;
         private System.Windows.Forms.Label lblNombre;
-        private System.Windows.Forms.TextBox txtChofer;
-        private System.Windows.Forms.Label label2;
+
     }
 }

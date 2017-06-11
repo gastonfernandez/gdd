@@ -11,13 +11,13 @@ using System.Data.SqlClient;
 
 namespace UberFrba.Abm_Chofer
 {
-    public partial class FormChofer : Form
+    public partial class AbmChofer : Form
     {
         
         SqlConnection conexion;
         Validacion v = new Validacion();
 
-        public FormChofer()
+        public AbmChofer()
         {
             InitializeComponent();
             conexion = new SqlConnection(@Config.strConnection);
@@ -28,7 +28,6 @@ namespace UberFrba.Abm_Chofer
             conexion.Open();
             SqlCommand cargar = new SqlCommand("OSNR.CargarChoferes", conexion);
             cargar.CommandType = CommandType.StoredProcedure;
-            cargar.Parameters.Add("@Chofer", SqlDbType.Decimal).Value = txtChofer.Text;
             cargar.Parameters.Add("@Nombre", SqlDbType.VarChar).Value = txtNombre.Text;
             cargar.Parameters.Add("@Apellido", SqlDbType.VarChar).Value = txtApellido.Text;
             cargar.Parameters.Add("@Documento", SqlDbType.Decimal).Value = txtDni.Text;
@@ -65,17 +64,6 @@ namespace UberFrba.Abm_Chofer
                 cargarChoferes();
         }
 
-
-        private void FormChofer_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtNombre_TextChanged(object sender, EventArgs e)
-        {
-         
-        }
-
         private void btnBuscar_Click(object sender, EventArgs e)
         {
             cargarChoferes();
@@ -103,23 +91,7 @@ namespace UberFrba.Abm_Chofer
         {
             txtNombre.Text = "";
             txtApellido.Text = "";
-            txtChofer.Text = "";
             txtDni.Text = "";
-        }
-
-        private void lblNombre_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void lblApellido_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void txtApellido_TextChanged(object sender, EventArgs e)
-        {
-           
         }
 
         private void txtChofer_KeyPress(object sender, KeyPressEventArgs e)

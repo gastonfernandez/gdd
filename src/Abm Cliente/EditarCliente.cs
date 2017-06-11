@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using UberFrba.Mappings;
 
 namespace UberFrba.Abm_Cliente
 {
@@ -15,7 +16,7 @@ namespace UberFrba.Abm_Cliente
     {
         Validacion v = new Validacion();
         SqlConnection conexion;
-        decimal cliente;
+        String clienteId = null;
         List<FormEditarCliente> afiliadosClientes = new List<FormEditarCliente>();
 
         public FormEditarCliente()
@@ -25,9 +26,9 @@ namespace UberFrba.Abm_Cliente
             dtpNacimiento.Value = Config.fecha;
         }
 
-        public void cargarDatos(decimal numeroCliente)
+        public void cargarDatos(String numeroCliente)
         {
-            cliente = numeroCliente;
+            clienteId = numeroCliente;
 
             conexion.Open();
 
@@ -53,7 +54,7 @@ namespace UberFrba.Abm_Cliente
                         
             txtTelefono.Text = tabla.Rows[0]["usu_telefono"].ToString();
             txtEmail.Text = tabla.Rows[0]["usu_mail"].ToString();
-            dtpNacimiento.Text = tabla.Rows[0]["usua_fecha_nacimiento"].ToString();
+            dtpNacimiento.Text = tabla.Rows[0]["usu_fecha_nacimiento"].ToString();
 
             conexion.Close();
         }
@@ -69,6 +70,9 @@ namespace UberFrba.Abm_Cliente
                 else
                 {
                     this.DialogResult = DialogResult.OK;
+                    guardarDatos();
+                    MessageBox.Show("Datos guardados correctamente!");
+                    this.Close();
                 }
             }
         }
@@ -76,7 +80,7 @@ namespace UberFrba.Abm_Cliente
         private bool existeEmail()
         {
             conexion.Open();
-            String query = "SELECT usu_id FROM OSNR.Usuario JOIN OSNR.Cliente ON usu_id = cli_id_usuario WHERE usu_mail = '" + txtEmail.Text + "' AND cli_id <> '" + cliente + "'";
+            String query = "SELECT usu_id FROM OSNR.Usuario JOIN OSNR.Cliente ON usu_id = cli_id_usuario WHERE usu_mail = '" + txtEmail.Text + "' AND cli_id <> '" + clienteId + "'";
 
             SqlCommand listar = new SqlCommand(query, conexion);
 
@@ -92,56 +96,20 @@ namespace UberFrba.Abm_Cliente
             return false;
         }
 
-        public SqlCommand generarComandoSQL()
-        {
-            SqlCommand guardar;
-            guardar = new SqlCommand();
-            guardar.CommandType = CommandType.StoredProcedure;
-
-            guardar.CommandText = "OSNR.ModificarCliente";
-
-            guardar.Parameters.Add("@Cliente", SqlDbType.Decimal).Value = cliente;
-            guardar.Parameters.Add("@Nombre", SqlDbType.VarChar).Value = txtNombre.Text;
-            guardar.Parameters.Add("@Apellido", SqlDbType.VarChar).Value = txtApellido.Text;
-            guardar.Parameters.Add("@Documento", SqlDbType.Decimal).Value = txtDocumento.Text;
-            
-            guardar.Parameters.Add("@Domicilio", SqlDbType.VarChar).Value = txtDomicilio.Text;
-            
-            guardar.Parameters.Add("@Telefono", SqlDbType.Decimal).Value = txtTelefono.Text;
-            guardar.Parameters.Add("@Email", SqlDbType.VarChar).Value = txtEmail.Text;
-            guardar.Parameters.Add("@FechaNac", SqlDbType.DateTime).Value = dtpNacimiento.Text;
-
-            return guardar;
-        }
-
         private void guardarDatos()
         {
-            conexion.Open();
+            Dictionary<String, DbTypedValue> campos = new Dictionary<String, DbTypedValue>();
+            campos.Add("clienteId", new DbTypedValue(clienteId, SqlDbType.Decimal));
+            campos.Add("Nombre", new DbTypedValue(txtNombre.Text, SqlDbType.VarChar));
+            campos.Add("Apellido", new DbTypedValue(txtApellido.Text, SqlDbType.VarChar));
+            campos.Add("Dni", new DbTypedValue(txtDocumento.Text, SqlDbType.Decimal));
+            campos.Add("Direccion", new DbTypedValue(txtDomicilio.Text, SqlDbType.VarChar));
+            campos.Add("Telefono", new DbTypedValue(txtTelefono.Text, SqlDbType.Decimal));
+            campos.Add("Email", new DbTypedValue(txtEmail.Text, SqlDbType.VarChar));
+            campos.Add("FechaNac", new DbTypedValue(dtpNacimiento.Text, SqlDbType.DateTime));
 
-            if (this.Tag.ToString() == "Agregar")
-            {
-                SqlCommand nuevoIdCliente = new SqlCommand("OSNR.ObtenerNuevoIdCliente", conexion);
-                nuevoIdCliente.CommandType = CommandType.StoredProcedure;
-
-                var nuevoId = nuevoIdCliente.Parameters.Add("@id", SqlDbType.Decimal);
-                nuevoId.Direction = ParameterDirection.Output;
-                SqlDataReader dataId = nuevoIdCliente.ExecuteReader();
-                dataId.Close();
-                cliente = decimal.Parse(nuevoId.Value.ToString());
-            }
-
-            SqlTransaction transaccion;
-
-            transaccion = conexion.BeginTransaction("Transaccion");
-
-            SqlCommand comando = generarComandoSQL();
-            comando.Connection = conexion;
-            comando.Transaction = transaccion;
-
-            comando.ExecuteNonQuery();
-
-            transaccion.Commit();
-            conexion.Close();
+            Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
+            new BaseDeDatos().ExecSP("OSNR.ModificarOCrearCliente", campos, errorMensaje);
         }
 
         private bool camposCompletos()
@@ -162,12 +130,10 @@ namespace UberFrba.Abm_Cliente
             {
                 MessageBox.Show("El documento debe contener solo numeros");
             }
-
             else if (txtDomicilio.Text == "")
             {
                 MessageBox.Show("Complete el domicilio");
             }
-            
             else if (txtTelefono.Text == "")
             {
                 MessageBox.Show("Complete el telefono");
@@ -175,10 +141,6 @@ namespace UberFrba.Abm_Cliente
             else if (!esNumerico(txtTelefono.Text))
             {
                 MessageBox.Show("El telefono debe contener solo numeros");
-            }
-            else if (txtEmail.Text == "")
-            {
-                MessageBox.Show("Complete el email");
             }
             else
             {
@@ -192,34 +154,14 @@ namespace UberFrba.Abm_Cliente
             return System.Text.RegularExpressions.Regex.IsMatch(cadena, @"^\d+$");
         }
 
-        private void btnCancelar_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtNombre_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void txtNombre_KeyPress(object sender, KeyPressEventArgs e)
         {
             v.soloLetras(e);
         }
 
-        private void txtApellido_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void txtApellido_KeyPress(object sender, KeyPressEventArgs e)
         {
             v.soloLetras(e);
-        }
-
-        private void txtDocumento_KeyUp(object sender, KeyEventArgs e)
-        {
-
         }
 
         private void txtDocumento_KeyPress(object sender, KeyPressEventArgs e)
@@ -231,5 +173,6 @@ namespace UberFrba.Abm_Cliente
         {
             v.soloNumeros(e);
         }
+
     }
 }

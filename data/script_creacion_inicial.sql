@@ -139,28 +139,29 @@ CREATE TABLE OSNR.Usuario (
 	usu_dni numeric(18, 0) UNIQUE NOT NULL,
 	usu_nombre nvarchar(255) NOT NULL,
 	usu_apellido nvarchar(255) NOT NULL,
-	usu_direccion nvarchar(255),
-	usu_telefono numeric(18, 0),
+	usu_direccion nvarchar(255) NOT NULL,
+	usu_telefono numeric(18, 0) UNIQUE NOT NULL,
 	usu_mail nvarchar(255),
-	usu_fecha_nacimiento datetime,
+	usu_fecha_nacimiento datetime NOT NULL,
 
 	/* Esto es propio del Usuario de login y no de la persona */
 	usu_login nvarchar(255) UNIQUE NOT NULL,
 	usu_password varbinary(255) NOT NULL,
-	usu_cantidad_intentos smallint DEFAULT 0 NOT NULL,
-	usu_habilitado bit DEFAULT 1 NOT NULL
+	usu_cantidad_intentos smallint DEFAULT 0 NOT NULL
 	)
 GO
 
 CREATE TABLE OSNR.Chofer (
 	cho_id int IDENTITY(1,1) PRIMARY KEY,
-	cho_id_usuario int REFERENCES OSNR.Usuario UNIQUE NOT NULL
+	cho_id_usuario int REFERENCES OSNR.Usuario UNIQUE NOT NULL,
+	cho_habilitado bit DEFAULT 1 NOT NULL
 	)
 GO
 
 CREATE TABLE OSNR.Cliente (
 	cli_id int IDENTITY(1,1) PRIMARY KEY,
-	cli_id_usuario int REFERENCES OSNR.Usuario UNIQUE NOT NULL
+	cli_id_usuario int REFERENCES OSNR.Usuario UNIQUE NOT NULL,
+	cli_habilitado bit DEFAULT 1 NOT NULL
 	)
 GO
 
@@ -257,8 +258,8 @@ INSERT INTO OSNR.Rol (rol_nombre) values ('Administrador')	/* ID 1 */
 INSERT INTO OSNR.Rol (rol_nombre) values ('Cliente')		/* ID 2 */
 INSERT INTO OSNR.Rol (rol_nombre) values ('Chofer')			/* ID 3 */
 
-INSERT INTO OSNR.Usuario (usu_nombre, usu_apellido, usu_dni, usu_login, usu_password)
-	values ('Administrador', 'OSNR', '11111', 'admin', HASHBYTES('SHA2_256', 'w23e'))
+INSERT INTO OSNR.Usuario (usu_nombre, usu_apellido, usu_dni, usu_direccion, usu_telefono, usu_fecha_nacimiento, usu_login, usu_password)
+	values ('Administrador', 'OSNR', '11111', 'En la esquina, a la vuelta', '34346557634987', GETDATE(), 'admin', HASHBYTES('SHA2_256', 'w23e'))
 GO
 INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
 	values(1, 1)
@@ -281,14 +282,14 @@ GO
 
 /* (id_rol, id_funcionalidad) (primero todas las del admin..) */
 -- Admin
---INSERT INTO OSNR.FuncionalidadRol values (1,1) -- ABM Rol
---INSERT INTO OSNR.FuncionalidadRol values (1,2) -- ABM Cliente
---INSERT INTO OSNR.FuncionalidadRol values (1,3) -- ABM Chofer
---INSERT INTO OSNR.FuncionalidadRol values (1,4) -- ABM Automovil
---INSERT INTO OSNR.FuncionalidadRol values (1,5) -- ABM Turno
+INSERT INTO OSNR.FuncionalidadRol values (1,1) -- ABM Rol
+INSERT INTO OSNR.FuncionalidadRol values (1,2) -- ABM Cliente
+INSERT INTO OSNR.FuncionalidadRol values (1,3) -- ABM Chofer
+INSERT INTO OSNR.FuncionalidadRol values (1,4) -- ABM Automovil
+INSERT INTO OSNR.FuncionalidadRol values (1,5) -- ABM Turno
 INSERT INTO OSNR.FuncionalidadRol values (1,6) -- Registro de Viaje
 INSERT INTO OSNR.FuncionalidadRol values (1,7) -- Rendicion de Viaje
---INSERT INTO OSNR.FuncionalidadRol values (1,8) -- Facturacion de Cliente
+INSERT INTO OSNR.FuncionalidadRol values (1,8) -- Facturacion de Cliente
 INSERT INTO OSNR.FuncionalidadRol values (1,9) -- Listados Estadistico
 
 -- Cliente
@@ -321,7 +322,7 @@ GO
 
 
 /* Usuarios */
-/* Tomamos como usuario el nombre+apellido y como password su nombre */
+/* Tomamos como usuario el nombre y como password el nombre */
 INSERT INTO OSNR.Usuario
 	SELECT DISTINCT
 		Chofer_Dni,
@@ -331,10 +332,9 @@ INSERT INTO OSNR.Usuario
 		Chofer_Telefono,
 		Chofer_Mail,
 		Chofer_Fecha_Nac,
-		Chofer_Nombre + Chofer_Apellido,
-		HASHBYTES('SHA2_256', Chofer_Nombre),
-		0, --Intentos login
-		1  --Habilitado
+		CONVERT(VARCHAR(18), Chofer_Telefono),						 -- Usuario
+		HASHBYTES('SHA2_256', CONVERT(VARCHAR(18), Chofer_Telefono)),-- Password
+		0 --Intentos login
 	FROM gd_esquema.Maestra
 GO
 
@@ -347,24 +347,25 @@ INSERT INTO OSNR.Usuario
 		Cliente_Telefono,
 		Cliente_Mail,
 		Cliente_Fecha_Nac,
-		Cliente_Nombre + Cliente_Apellido,
-		HASHBYTES('SHA2_256', Cliente_Nombre),
-		0, --Intentos login
-		1  --Habilitado
+		CONVERT(VARCHAR(18), Cliente_Telefono),						  -- Usuario
+		HASHBYTES('SHA2_256', CONVERT(VARCHAR(18), Cliente_Telefono)),-- Password
+		0 --Intentos login
 	FROM gd_esquema.Maestra
 GO
 
 
 /* Chofer */
 INSERT INTO OSNR.Chofer
-	SELECT DISTINCT usu_id
+	SELECT DISTINCT usu_id,
+					 1  --Habilitado
 	FROM gd_esquema.Maestra, OSNR.Usuario
 	WHERE usu_dni = Chofer_Dni
 GO
 
 /* Cliente */
 INSERT INTO OSNR.Cliente
-	SELECT DISTINCT usu_id
+	SELECT DISTINCT usu_id,
+				     1  --Habilitado
 	FROM gd_esquema.Maestra, OSNR.Usuario
 	WHERE usu_dni = Cliente_Dni
 GO
@@ -557,3 +558,93 @@ AS
 	GROUP BY cli_id, usu_nombre, usu_apellido, usu_dni, usu_telefono, usu_mail, via_id_vehiculo, veh_patente, veh_licencia, veh_rodado
 	ORDER BY CantidadVecesUtilizado DESC
 GO
+
+-- ABM Clientes
+CREATE PROCEDURE OSNR.BuscarClientes
+@nombre varchar(255),
+@apellido varchar(255),
+@dni varchar(18)
+AS
+	SELECT
+		cli_id 'Nro. Cliente',
+		usu_nombre 'Nombre',
+		usu_apellido 'Apellido',
+		usu_dni 'Documento',
+		usu_telefono 'Telefono',
+		usu_direccion 'Direccion',
+		usu_mail 'Email',
+		cli_habilitado 'Habilitado'
+	FROM OSNR.Cliente 
+		JOIN OSNR.Usuario ON cli_id_usuario = usu_id
+	WHERE
+		usu_nombre LIKE '%'+ISNULL(@nombre, '')+'%' 
+		AND usu_apellido LIKE '%'+ISNULL(@apellido, '')+'%' 
+		AND (@dni IS NULL OR @dni = '' OR CONVERT(varchar(18), usu_dni) = @dni)
+	ORDER BY cli_id
+GO
+
+
+CREATE PROCEDURE OSNR.DeshabilitarCliente
+@clienteId numeric(18, 0)
+AS
+	UPDATE OSNR.Cliente 
+	SET cli_habilitado = 0 
+	WHERE cli_id = @clienteId
+GO
+
+
+CREATE PROCEDURE OSNR.ModificarOCrearCliente
+@clienteId numeric(18, 0) = NULL,
+@Nombre varchar(255), @Apellido varchar(255), @Dni numeric(18,0),
+@Direccion varchar(255), @Telefono numeric(18,0), @Email varchar(255), @FechaNac datetime
+AS
+
+DECLARE @usuarioId INT
+SELECT @usuarioId = cli_id_usuario FROM OSNR.Cliente WHERE cli_id = @clienteId
+
+IF (@usuarioId IS NULL) 
+	BEGIN
+		INSERT INTO OSNR.Usuario 
+		(
+			usu_nombre,
+			usu_apellido, 
+			usu_dni, 
+			usu_direccion, 
+			usu_telefono,
+			usu_mail, 
+			usu_fecha_nacimiento, 
+			usu_login, 
+			usu_password
+		) 
+		VALUES (
+			@Nombre, 
+			@Apellido, 
+			@Dni, 
+			@Direccion,
+			@Telefono,
+			@Email,
+			@FechaNac, 
+			CONVERT(VARCHAR(18), @Telefono),
+			HASHBYTES('SHA2_256', CONVERT(VARCHAR(18), @Telefono))
+		)
+
+		SET @usuarioId = @@IDENTITY
+		INSERT INTO OSNR.Cliente (cli_id_usuario) VALUES (@usuarioId)
+		INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
+			values(@usuarioId, 2)
+	END
+ELSE
+	BEGIN
+		UPDATE OSNR.Usuario 
+		SET 
+			usu_nombre = @Nombre,
+			usu_apellido = @Apellido,
+			usu_dni = @Dni,
+			usu_direccion = @Direccion, 
+			usu_telefono = @Telefono,
+			usu_mail = @Email,
+			usu_fecha_nacimiento = @FechaNac
+		WHERE usu_id = @usuarioId
+	END
+GO
+

@@ -162,12 +162,10 @@ namespace UberFrba.Abm_Chofer
             {
                 MessageBox.Show("El documento debe contener solo numeros");
             }
-
             else if (txtDomicilio.Text == "")
             {
                 MessageBox.Show("Complete el domicilio");
             }
-
             else if (txtTelefono.Text == "")
             {
                 MessageBox.Show("Complete el telefono");
@@ -175,10 +173,6 @@ namespace UberFrba.Abm_Chofer
             else if (!esNumerico(txtTelefono.Text))
             {
                 MessageBox.Show("El telefono debe contener solo numeros");
-            }
-            else if (txtEmail.Text == "")
-            {
-                MessageBox.Show("Complete el email");
             }
             else
             {
