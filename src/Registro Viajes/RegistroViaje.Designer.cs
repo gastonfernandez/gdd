@@ -53,10 +53,6 @@
             this.label5 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.btRegistrar = new System.Windows.Forms.Button();
-            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
-            this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.V = new Microsoft.VisualBasic.PowerPacks.LineShape();
-            this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
             this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChofer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCliente)).BeginInit();
@@ -287,40 +283,6 @@
             // 
             // shapeContainer1
             // 
-            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
-            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
-            this.shapeContainer1.Name = "shapeContainer1";
-            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
-            this.lineShape2,
-            this.V,
-            this.lineShape1});
-            this.shapeContainer1.Size = new System.Drawing.Size(921, 701);
-            this.shapeContainer1.TabIndex = 42;
-            this.shapeContainer1.TabStop = false;
-            // 
-            // lineShape2
-            // 
-            this.lineShape2.Name = "lineShape2";
-            this.lineShape2.X1 = 8;
-            this.lineShape2.X2 = 892;
-            this.lineShape2.Y1 = 615;
-            this.lineShape2.Y2 = 615;
-            // 
-            // V
-            // 
-            this.V.Name = "V";
-            this.V.X1 = 8;
-            this.V.X2 = 892;
-            this.V.Y1 = 351;
-            this.V.Y2 = 351;
-            // 
-            // lineShape1
-            // 
-            this.lineShape1.Name = "lineShape1";
-            this.lineShape1.X1 = 5;
-            this.lineShape1.X2 = 889;
-            this.lineShape1.Y1 = 297;
-            this.lineShape1.Y2 = 297;
             // 
             // label4
             // 
@@ -362,7 +324,6 @@
             this.Controls.Add(this.tbApellido);
             this.Controls.Add(this.tbDni);
             this.Controls.Add(this.tbNombre);
-            this.Controls.Add(this.shapeContainer1);
             this.Name = "RegistroViaje";
             this.Text = "Registro Viajes";
             this.Load += new System.EventHandler(this.RegistroViaje_Load);
@@ -400,10 +361,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button btRegistrar;
-        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
-        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
-        private Microsoft.VisualBasic.PowerPacks.LineShape V;
-        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
         private System.Windows.Forms.Label label4;
     }
 }

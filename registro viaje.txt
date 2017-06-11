@@ -1,0 +1,4 @@
+Para la parte de rendicion de viajes, se permite unicamente cargar por parte de operadores o administradores viajes relacionados a autos y turnos asignados a los choferes, ya que al realizar la migracion entendemos que no va a quedar ningun viaje anterior a cargar.
+A su vez no dejamos cargar viajes sobre turnos inhabilitados ya que de estarlo no será posible registrar viaje alguno.
+En cuanto a la estrategia utilizada y debido a que el chofer ya tiene asignado un turno y un vehiculo decidimos que al mostrar los datos del chofer mostramos todos los asignados al mismo, luego permitimos cargar los km con sus validaciones, sus fechas y por ultimo los clientes.
+Con respecto a la carga del viaje no permitiremos cargas por fuera de los horarios de sus turnos, validaremos estas cuestiones por extra al enunciado. 
