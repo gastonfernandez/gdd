@@ -186,7 +186,8 @@ GO
 CREATE TABLE OSNR.Viaje (
 	via_id int IDENTITY(1,1) PRIMARY KEY,
 	via_cantidad_km int NOT NULL,
-	via_fecha datetime NOT NULL,
+	via_fecha_inicio datetime NOT NULL,
+	via_fecha_fin datetime NOT NULL,
 	via_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
 	via_id_cliente int REFERENCES OSNR.Cliente NOT NULL,
 	via_id_vehiculo int REFERENCES OSNR.Vehiculo NOT NULL,
@@ -422,9 +423,10 @@ GO
 
 /* Viaje */
 INSERT INTO OSNR.Viaje
-	(via_cantidad_km,via_fecha,via_id_chofer,via_id_cliente,via_id_vehiculo,via_id_turno)
+	(via_cantidad_km,via_fecha_inicio,via_fecha_fin,via_id_chofer,via_id_cliente,via_id_vehiculo,via_id_turno)
 	SELECT DISTINCT Viaje_Cant_Kilometros, 
 					Viaje_Fecha, 
+					Viaje_Fecha, -- en la migracion ponemos misma fecha inicio que fin
 					ch.cho_id, 
 					c.cli_id, 
 					v.veh_id,
@@ -465,7 +467,7 @@ INSERT INTO OSNR.FacturaViaje
 					join OSNR.Vehiculo v on v.veh_patente = mas.Auto_Patente
 					join OSNR.Cliente c on cli_id_usuario = uc.usu_id
 			        join OSNR.Chofer ch on ch.cho_id_usuario=uch.usu_id
-	     			join OSNR.Viaje via on  Viaje_Fecha = via.via_fecha
+	     			join OSNR.Viaje via on  Viaje_Fecha = via.via_fecha_inicio
 										and via.via_id_chofer=ch.cho_id
 										and via.via_id_cliente =c.cli_id
 										and via.via_id_vehiculo=v.veh_id
@@ -498,7 +500,7 @@ INSERT INTO OSNR.RendicionViaje
 	FROM	gd_esquema.Maestra
 			join OSNR.Rendicion ON ren_numero=Rendicion_Nro
 			join OSNR.Viaje ON via_cantidad_km=Viaje_Cant_Kilometros
-							AND via_fecha=Viaje_Fecha
+							AND via_fecha_inicio=Viaje_Fecha
 							AND via_id_chofer=ren_id_chofer
 	WHERE	Rendicion_Nro IS NOT NULL     			
 GO
@@ -545,7 +547,7 @@ AS
 	FROM OSNR.Viaje
 		JOIN OSNR.Chofer ON via_id_chofer=cho_id
 		JOIN OSNR.Usuario ON usu_id=cho_id_usuario
-	WHERE via_fecha between @fecha_inicio and @fecha_fin
+	WHERE via_fecha_inicio between @fecha_inicio and @fecha_fin
 	ORDER BY KmViajeMasLargo DESC
 GO
 
@@ -588,7 +590,7 @@ AS
 		JOIN OSNR.Viaje ON via_id_cliente=cli_id
 		JOIN OSNR.Usuario ON usu_id=cli_id_usuario
 		JOIN OSNR.Vehiculo ON veh_id=via_id_vehiculo
-	WHERE via_fecha between @fecha_inicio and @fecha_fin
+	WHERE via_fecha_inicio between @fecha_inicio and @fecha_fin
 	GROUP BY cli_id, usu_nombre, usu_apellido, usu_dni, usu_telefono, usu_mail, via_id_vehiculo, veh_patente, veh_licencia, veh_rodado
 	ORDER BY CantidadVecesUtilizado DESC
 GO
@@ -681,3 +683,137 @@ AS
 		END
 GO
 
+
+CREATE PROCEDURE OSNR.RegistrarViaje
+@idChofer   bigint    ,
+@idCliente  bigint    ,
+@idTurno    bigint    ,
+@idVehiculo bigint    ,
+@fechaDesde datetime    ,
+@fechaHasta datetime    ,
+@cantKm     int    
+AS
+	insert into OSNR.Viaje
+	(via_id_chofer,via_id_cliente,via_id_turno,via_id_vehiculo,via_fecha_inicio,via_fecha_fin,via_cantidad_km)
+	values (@idChofer,@idCliente,@idTurno,@idVehiculo,@fechaDesde,@fechaHasta,@cantKm)
+
+GO
+
+create procedure OSNR.BuscarViajesCliente
+@idCliente bigint,
+@fechaDesde datetime,
+@fechaHasta datetime
+AS
+select * 
+from OSNR.Viaje
+where via_id_cliente=@idCliente
+and  ( (@fechaDesde between via_fecha_inicio and via_fecha_fin)
+		or (@fechaHasta between via_fecha_inicio and via_fecha_fin)
+     )
+GO
+create procedure OSNR.BuscarViajesChofer
+@idChofer bigint,
+@fechaDesde datetime,
+@fechaHasta datetime
+AS
+select * 
+from OSNR.Viaje
+where via_id_chofer=@idChofer
+and  ( (@fechaDesde between via_fecha_inicio and via_fecha_fin)
+		or (@fechaHasta between via_fecha_inicio and via_fecha_fin)
+     )
+GO
+
+-- ABM Choferes
+CREATE PROCEDURE OSNR.BuscarChoferes
+@nombre varchar(255),
+@apellido varchar(255),
+@dni varchar(18)
+AS
+ SELECT
+  cho_id 'Nro. Chofer',
+  usu_nombre 'Nombre',
+  usu_apellido 'Apellido',
+  usu_dni 'Documento',
+  usu_telefono 'Telefono',
+  usu_direccion 'Direccion',
+  usu_mail 'Email',
+  cho_habilitado 'Habilitado'
+ FROM OSNR.Chofer 
+  JOIN OSNR.Usuario ON cho_id_usuario = usu_id
+ WHERE
+  usu_nombre LIKE '%'+ISNULL(@nombre, '')+'%' 
+  AND usu_apellido LIKE '%'+ISNULL(@apellido, '')+'%' 
+  AND (@dni IS NULL OR @dni = '' OR CONVERT(varchar(18), usu_dni) = @dni)
+ ORDER BY cho_id
+GO
+
+CREATE PROCEDURE OSNR.DeshabilitarChofer
+@choferId numeric(18, 0)
+AS
+ UPDATE OSNR.Chofer
+ SET cho_habilitado = 0 
+ WHERE cho_id = @choferId
+GO
+
+CREATE PROCEDURE OSNR.HabilitarChofer
+@choferId numeric(18, 0)
+AS
+ UPDATE OSNR.Chofer
+ SET cho_habilitado = 1 
+ WHERE cho_id = @choferId
+GO
+
+CREATE PROCEDURE OSNR.ModificarOCrearChofer
+@choferId numeric(18, 0) = NULL,
+@Nombre varchar(255), @Apellido varchar(255), @Dni numeric(18,0),
+@Direccion varchar(255), @Telefono numeric(18,0), @Email varchar(255), @FechaNac datetime
+AS
+ DECLARE @usuarioId INT
+ SELECT @usuarioId = cho_id_usuario FROM OSNR.Chofer WHERE cho_id = @choferId
+
+ IF (@usuarioId IS NULL) 
+  BEGIN
+   INSERT INTO OSNR.Usuario 
+   (
+    usu_nombre,
+    usu_apellido, 
+    usu_dni, 
+    usu_direccion, 
+    usu_telefono,
+    usu_mail, 
+    usu_fecha_nacimiento, 
+    usu_login, 
+    usu_password
+   ) 
+   VALUES (
+    @Nombre, 
+    @Apellido, 
+    @Dni, 
+    @Direccion,
+    @Telefono,
+    @Email,
+    @FechaNac, 
+    CONVERT(VARCHAR(18), @Telefono),
+    HASHBYTES('SHA2_256', CONVERT(VARCHAR(18), @Telefono))
+   )
+
+   SET @usuarioId = @@IDENTITY
+   INSERT INTO OSNR.Chofer (cho_id_usuario) VALUES (@usuarioId)
+   INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
+    values(@usuarioId, 3)
+  END
+ ELSE
+  BEGIN
+   UPDATE OSNR.Usuario 
+   SET 
+    usu_nombre = @Nombre,
+    usu_apellido = @Apellido,
+    usu_dni = @Dni,
+    usu_direccion = @Direccion, 
+    usu_telefono = @Telefono,
+    usu_mail = @Email,
+    usu_fecha_nacimiento = @FechaNac
+   WHERE usu_id = @usuarioId
+  END
+GO

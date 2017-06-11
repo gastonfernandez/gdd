@@ -46,8 +46,18 @@
             this.label14 = new System.Windows.Forms.Label();
             this.dgvChofer = new System.Windows.Forms.DataGridView();
             this.dgvCliente = new System.Windows.Forms.DataGridView();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
-            this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
+            this.dtFechaDesde = new System.Windows.Forms.DateTimePicker();
+            this.dtFechaHasta = new System.Windows.Forms.DateTimePicker();
+            this.tbKM = new System.Windows.Forms.TextBox();
+            this.km = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.btRegistrar = new System.Windows.Forms.Button();
+            this.shapeContainer1 = new Microsoft.VisualBasic.PowerPacks.ShapeContainer();
+            this.lineShape2 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.V = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.lineShape1 = new Microsoft.VisualBasic.PowerPacks.LineShape();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChofer)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCliente)).BeginInit();
             this.SuspendLayout();
@@ -65,6 +75,7 @@
             this.tbDni.Name = "tbDni";
             this.tbDni.Size = new System.Drawing.Size(163, 20);
             this.tbDni.TabIndex = 4;
+            this.tbDni.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbDni_KeyPress);
             // 
             // tbApellido
             // 
@@ -109,21 +120,11 @@
             this.label6.TabIndex = 15;
             this.label6.Text = "Datos Chofer";
             // 
-            // shapeContainer1
-            // 
-            // 
-            // lineShape2
-            // 
-            
-            // 
-            // lineShape1
-            // 
-        
             // btCargarChofer
             // 
-            this.btCargarChofer.Location = new System.Drawing.Point(82, 263);
+            this.btCargarChofer.Location = new System.Drawing.Point(78, 263);
             this.btCargarChofer.Name = "btCargarChofer";
-            this.btCargarChofer.Size = new System.Drawing.Size(724, 23);
+            this.btCargarChofer.Size = new System.Drawing.Size(711, 23);
             this.btCargarChofer.TabIndex = 17;
             this.btCargarChofer.Text = "Buscar datos de Chofer";
             this.btCargarChofer.UseVisualStyleBackColor = true;
@@ -131,9 +132,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(78, 711);
+            this.button1.Location = new System.Drawing.Point(58, 583);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(724, 23);
+            this.button1.Size = new System.Drawing.Size(748, 23);
             this.button1.TabIndex = 30;
             this.button1.Text = "Buscar datos de Cliente";
             this.button1.UseVisualStyleBackColor = true;
@@ -142,7 +143,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(280, 510);
+            this.label11.Location = new System.Drawing.Point(260, 382);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(44, 13);
             this.label11.TabIndex = 26;
@@ -160,7 +161,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(28, 517);
+            this.label13.Location = new System.Drawing.Point(8, 389);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(44, 13);
             this.label13.TabIndex = 24;
@@ -168,7 +169,7 @@
             // 
             // tbApellidoCliente
             // 
-            this.tbApellidoCliente.Location = new System.Drawing.Point(350, 510);
+            this.tbApellidoCliente.Location = new System.Drawing.Point(330, 382);
             this.tbApellidoCliente.Name = "tbApellidoCliente";
             this.tbApellidoCliente.Size = new System.Drawing.Size(176, 20);
             this.tbApellidoCliente.TabIndex = 23;
@@ -176,14 +177,15 @@
             // 
             // tbDniCliente
             // 
-            this.tbDniCliente.Location = new System.Drawing.Point(626, 514);
+            this.tbDniCliente.Location = new System.Drawing.Point(606, 386);
             this.tbDniCliente.Name = "tbDniCliente";
             this.tbDniCliente.Size = new System.Drawing.Size(163, 20);
             this.tbDniCliente.TabIndex = 21;
+            this.tbDniCliente.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbDniCliente_KeyPress);
             // 
             // tbNombreCliente
             // 
-            this.tbNombreCliente.Location = new System.Drawing.Point(86, 510);
+            this.tbNombreCliente.Location = new System.Drawing.Point(66, 382);
             this.tbNombreCliente.Name = "tbNombreCliente";
             this.tbNombreCliente.Size = new System.Drawing.Size(163, 20);
             this.tbNombreCliente.TabIndex = 18;
@@ -191,7 +193,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(28, 485);
+            this.label14.Location = new System.Drawing.Point(8, 357);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(70, 13);
             this.label14.TabIndex = 31;
@@ -202,10 +204,10 @@
             this.dgvChofer.AllowUserToAddRows = false;
             this.dgvChofer.AllowUserToDeleteRows = false;
             this.dgvChofer.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvChofer.Location = new System.Drawing.Point(58, 92);
+            this.dgvChofer.Location = new System.Drawing.Point(78, 90);
             this.dgvChofer.Name = "dgvChofer";
             this.dgvChofer.ReadOnly = true;
-            this.dgvChofer.Size = new System.Drawing.Size(748, 150);
+            this.dgvChofer.Size = new System.Drawing.Size(707, 150);
             this.dgvChofer.TabIndex = 32;
             // 
             // dgvCliente
@@ -213,36 +215,135 @@
             this.dgvCliente.AllowUserToAddRows = false;
             this.dgvCliente.AllowUserToDeleteRows = false;
             this.dgvCliente.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvCliente.Location = new System.Drawing.Point(78, 555);
+            this.dgvCliente.Location = new System.Drawing.Point(58, 427);
             this.dgvCliente.Name = "dgvCliente";
             this.dgvCliente.ReadOnly = true;
             this.dgvCliente.Size = new System.Drawing.Size(748, 150);
             this.dgvCliente.TabIndex = 33;
             // 
-            // dateTimePicker1
+            // dtFechaDesde
             // 
-            this.dateTimePicker1.Location = new System.Drawing.Point(58, 351);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.Size = new System.Drawing.Size(200, 20);
-            this.dateTimePicker1.TabIndex = 34;
+            this.dtFechaDesde.CustomFormat = "dd/MM/yyyy HH:mm:ss";
+            this.dtFechaDesde.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtFechaDesde.Location = new System.Drawing.Point(346, 314);
+            this.dtFechaDesde.Name = "dtFechaDesde";
+            this.dtFechaDesde.Size = new System.Drawing.Size(200, 20);
+            this.dtFechaDesde.TabIndex = 34;
             // 
-            // dateTimePicker2
+            // dtFechaHasta
             // 
-            this.dateTimePicker2.CustomFormat = "dd/MM/yyyy HH:mm:ss";
-            this.dateTimePicker2.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dateTimePicker2.Location = new System.Drawing.Point(390, 351);
-            this.dateTimePicker2.Name = "dateTimePicker2";
-            this.dateTimePicker2.Size = new System.Drawing.Size(200, 20);
-            this.dateTimePicker2.TabIndex = 35;
-            this.dateTimePicker2.ValueChanged += new System.EventHandler(this.dateTimePicker2_ValueChanged);
+            this.dtFechaHasta.CustomFormat = "dd/MM/yyyy HH:mm:ss";
+            this.dtFechaHasta.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+            this.dtFechaHasta.Location = new System.Drawing.Point(652, 314);
+            this.dtFechaHasta.Name = "dtFechaHasta";
+            this.dtFechaHasta.Size = new System.Drawing.Size(200, 20);
+            this.dtFechaHasta.TabIndex = 35;
+            // 
+            // tbKM
+            // 
+            this.tbKM.Location = new System.Drawing.Point(129, 314);
+            this.tbKM.Name = "tbKM";
+            this.tbKM.Size = new System.Drawing.Size(100, 20);
+            this.tbKM.TabIndex = 36;
+            this.tbKM.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.tbKM_KeyPress_1);
+            // 
+            // km
+            // 
+            this.km.AutoSize = true;
+            this.km.Location = new System.Drawing.Point(75, 317);
+            this.km.Name = "km";
+            this.km.Size = new System.Drawing.Size(44, 13);
+            this.km.TabIndex = 37;
+            this.km.Text = "CantKm";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(249, 317);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(71, 13);
+            this.label5.TabIndex = 38;
+            this.label5.Text = "Fecha Desde";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(567, 317);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(68, 13);
+            this.label7.TabIndex = 39;
+            this.label7.Text = "Fecha Hasta";
+            // 
+            // btRegistrar
+            // 
+            this.btRegistrar.BackColor = System.Drawing.SystemColors.MenuHighlight;
+            this.btRegistrar.Location = new System.Drawing.Point(492, 632);
+            this.btRegistrar.Name = "btRegistrar";
+            this.btRegistrar.Size = new System.Drawing.Size(267, 57);
+            this.btRegistrar.TabIndex = 41;
+            this.btRegistrar.Text = "Registrar ";
+            this.btRegistrar.UseVisualStyleBackColor = false;
+            this.btRegistrar.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // shapeContainer1
+            // 
+            this.shapeContainer1.Location = new System.Drawing.Point(0, 0);
+            this.shapeContainer1.Margin = new System.Windows.Forms.Padding(0);
+            this.shapeContainer1.Name = "shapeContainer1";
+            this.shapeContainer1.Shapes.AddRange(new Microsoft.VisualBasic.PowerPacks.Shape[] {
+            this.lineShape2,
+            this.V,
+            this.lineShape1});
+            this.shapeContainer1.Size = new System.Drawing.Size(921, 701);
+            this.shapeContainer1.TabIndex = 42;
+            this.shapeContainer1.TabStop = false;
+            // 
+            // lineShape2
+            // 
+            this.lineShape2.Name = "lineShape2";
+            this.lineShape2.X1 = 8;
+            this.lineShape2.X2 = 892;
+            this.lineShape2.Y1 = 615;
+            this.lineShape2.Y2 = 615;
+            // 
+            // V
+            // 
+            this.V.Name = "V";
+            this.V.X1 = 8;
+            this.V.X2 = 892;
+            this.V.Y1 = 351;
+            this.V.Y2 = 351;
+            // 
+            // lineShape1
+            // 
+            this.lineShape1.Name = "lineShape1";
+            this.lineShape1.X1 = 5;
+            this.lineShape1.X2 = 889;
+            this.lineShape1.Y1 = 297;
+            this.lineShape1.Y2 = 297;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(551, 389);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(23, 13);
+            this.label4.TabIndex = 43;
+            this.label4.Text = "Dni";
             // 
             // RegistroViaje
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(923, 741);
-            this.Controls.Add(this.dateTimePicker2);
-            this.Controls.Add(this.dateTimePicker1);
+            this.ClientSize = new System.Drawing.Size(921, 701);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.btRegistrar);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.km);
+            this.Controls.Add(this.tbKM);
+            this.Controls.Add(this.dtFechaHasta);
+            this.Controls.Add(this.dtFechaDesde);
             this.Controls.Add(this.dgvCliente);
             this.Controls.Add(this.dgvChofer);
             this.Controls.Add(this.label14);
@@ -261,6 +362,7 @@
             this.Controls.Add(this.tbApellido);
             this.Controls.Add(this.tbDni);
             this.Controls.Add(this.tbNombre);
+            this.Controls.Add(this.shapeContainer1);
             this.Name = "RegistroViaje";
             this.Text = "Registro Viajes";
             this.Load += new System.EventHandler(this.RegistroViaje_Load);
@@ -291,7 +393,17 @@
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.DataGridView dgvChofer;
         private System.Windows.Forms.DataGridView dgvCliente;
-        private System.Windows.Forms.DateTimePicker dateTimePicker1;
-        private System.Windows.Forms.DateTimePicker dateTimePicker2;
+        private System.Windows.Forms.DateTimePicker dtFechaDesde;
+        private System.Windows.Forms.DateTimePicker dtFechaHasta;
+        private System.Windows.Forms.TextBox tbKM;
+        private System.Windows.Forms.Label km;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btRegistrar;
+        private Microsoft.VisualBasic.PowerPacks.ShapeContainer shapeContainer1;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape2;
+        private Microsoft.VisualBasic.PowerPacks.LineShape V;
+        private Microsoft.VisualBasic.PowerPacks.LineShape lineShape1;
+        private System.Windows.Forms.Label label4;
     }
 }
