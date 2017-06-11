@@ -138,6 +138,10 @@ namespace UberFrba.Abm_Chofer
             {
                 MessageBox.Show("Complete el telefono");
             }
+            else if (txtEmail.Text == "")
+            {
+                MessageBox.Show("Complete el email");
+            }
             else if (!esNumerico(txtTelefono.Text))
             {
                 MessageBox.Show("El telefono debe contener solo numeros");
