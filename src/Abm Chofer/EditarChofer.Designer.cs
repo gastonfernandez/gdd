@@ -86,6 +86,7 @@ namespace UberFrba.Abm_Chofer
             this.btnGuardar.TabIndex = 92;
             this.btnGuardar.Text = "Guardar";
             this.btnGuardar.UseVisualStyleBackColor = true;
+            this.btnGuardar.Click += new System.EventHandler(this.btnGuardar_Click);
             // 
             // label10
             // 

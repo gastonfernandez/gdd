@@ -14,17 +14,13 @@ namespace UberFrba.Abm_Cliente
 {
     public partial class AbmCliente : Form
     {
-
+        SqlConnection conexion;
         Validacion v = new Validacion();
 
         public AbmCliente()
         {
             InitializeComponent();
-            cargarClientes();
-        }
-
-        private void btnBuscar_Click_1(object sender, EventArgs e)
-        {
+            conexion = new SqlConnection(@Config.strConnection);
             cargarClientes();
         }
 
@@ -37,31 +33,25 @@ namespace UberFrba.Abm_Cliente
             
             Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
             dataGridView1.DataSource = new BaseDeDatos().ExecSPAndGetData("OSNR.BuscarClientes", campos, errorMensaje);
-            habilitarBotones();
-        }
-
-        private void habilitarBotones()
-        {
-            if (dataGridView1.SelectedRows.Count == 1)
-            {
-                btnEditar.Enabled = true;
-                btnEliminar.Enabled = true;
-            }
-            else
-            {
-                btnEditar.Enabled = false;
-                btnEliminar.Enabled = false;
-            }
         }
 
         private void btnEditar_Click(object sender, EventArgs e)
         {
-            FormEditarCliente form = new FormEditarCliente();
-            form.Tag = "Editar";
-            form.cargarDatos(dataGridView1.SelectedRows[0].Cells[0].Value.ToString());
-            form.ShowDialog();
-            if (form.DialogResult == DialogResult.OK)
-                cargarClientes();
+            if (dataGridView1.SelectedRows.Count == 1)
+            {
+                FormEditarCliente form = new FormEditarCliente();
+                form.Tag = "Editar";
+                form.cargarDatos(dataGridView1.SelectedRows[0].Cells[0].Value.ToString());
+                form.ShowDialog();
+                if (form.DialogResult == DialogResult.OK)
+                {
+                    cargarClientes();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Debe seleccionar un cliente para editar");
+            }
         }
 
         private void btnBuscar_Click(object sender, EventArgs e)
@@ -69,21 +59,42 @@ namespace UberFrba.Abm_Cliente
             cargarClientes();
         }
 
-        private void btnEliminar_Click(object sender, EventArgs e)
+        private void btnModificarHabilitacion_Click(object sender, EventArgs e)
         {
-            
-            DialogResult dialogResult = MessageBox.Show("Está seguro que desea eliminar al Cliente", "Uber", MessageBoxButtons.YesNo);
-            if (dialogResult == DialogResult.Yes)
+            if (dataGridView1.SelectedRows.Count == 1)
             {
                 Dictionary<String, DbTypedValue> campos = new Dictionary<String, DbTypedValue>();
-                campos.Add("clienteId", new DbTypedValue(dataGridView1.SelectedRows[0].Cells[0].Value.ToString(), SqlDbType.Decimal));
-   
-                Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
-                new BaseDeDatos().ExecSP("OSNR.DeshabilitarCliente", campos, errorMensaje);
-               
-                MessageBox.Show("Cliente deshabilitado exitosamente");
-                cargarClientes();
-            }            
+                String clienteId = dataGridView1.SelectedRows[0].Cells[0].Value.ToString();
+                campos.Add("clienteId", new DbTypedValue(clienteId, SqlDbType.Decimal));
+                Boolean habilitado = Convert.ToBoolean(dataGridView1.SelectedRows[0].Cells[7].Value.ToString());
+
+                if(habilitado)
+                {
+                    DialogResult dialogResult = MessageBox.Show("¿Está seguro que desea deshabilitar al Cliente?", "Uber", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
+                        new BaseDeDatos().ExecSP("OSNR.DeshabilitarCliente", campos, errorMensaje);
+
+                        MessageBox.Show("Cliente deshabilitado exitosamente");
+                        cargarClientes();
+                    } 
+                } else {
+                    DialogResult dialogResult = MessageBox.Show("¿Está seguro que desea habilitar al Cliente?", "Uber", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
+                        new BaseDeDatos().ExecSP("OSNR.HabilitarCliente", campos, errorMensaje);
+
+                        MessageBox.Show("Cliente habilitado exitosamente");
+                        cargarClientes();
+                    }                   
+                }
+            }
+            else
+            {
+                MessageBox.Show("Debe seleccionar un cliente para deshabilitar");
+            }
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
@@ -91,16 +102,12 @@ namespace UberFrba.Abm_Cliente
             txtNombre.Text = "";
             txtApellido.Text = "";
             txtDni.Text = "";
+            cargarClientes();
         }
 
         private void txtCliente_KeyPress(object sender, KeyPressEventArgs e)
         {
             v.soloNumeros(e);
-        }
-
-        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            habilitarBotones();
         }
 
         private void btnAñadir_Click(object sender, EventArgs e)

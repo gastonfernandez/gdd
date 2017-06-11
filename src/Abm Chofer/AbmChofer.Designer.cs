@@ -29,7 +29,7 @@ namespace UberFrba.Abm_Chofer
         private void InitializeComponent()
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.btnEliminar = new System.Windows.Forms.Button();
+            this.btnModificarHabilitacion = new System.Windows.Forms.Button();
             this.btnEditar = new System.Windows.Forms.Button();
             this.btnAñadir = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -63,22 +63,21 @@ namespace UberFrba.Abm_Chofer
             this.dataGridView1.Size = new System.Drawing.Size(632, 158);
             this.dataGridView1.TabIndex = 7;
             // 
-            // btnEliminar
+            // btnModificarHabilitacion
             // 
-            this.btnEliminar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEliminar.Enabled = false;
-            this.btnEliminar.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEliminar.Location = new System.Drawing.Point(542, 355);
-            this.btnEliminar.Name = "btnEliminar";
-            this.btnEliminar.Size = new System.Drawing.Size(150, 32);
-            this.btnEliminar.TabIndex = 11;
-            this.btnEliminar.Text = "Eliminar";
-            this.btnEliminar.UseVisualStyleBackColor = true;
+            this.btnModificarHabilitacion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnModificarHabilitacion.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnModificarHabilitacion.Location = new System.Drawing.Point(542, 355);
+            this.btnModificarHabilitacion.Name = "btnModificarHabilitacion";
+            this.btnModificarHabilitacion.Size = new System.Drawing.Size(150, 32);
+            this.btnModificarHabilitacion.TabIndex = 11;
+            this.btnModificarHabilitacion.Text = "Habilitar/Deshabilitar";
+            this.btnModificarHabilitacion.UseVisualStyleBackColor = true;
+            this.btnModificarHabilitacion.Click += new System.EventHandler(this.btnModificarHabilitacion_Click);
             // 
             // btnEditar
             // 
             this.btnEditar.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnEditar.Enabled = false;
             this.btnEditar.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEditar.Location = new System.Drawing.Point(224, 355);
             this.btnEditar.Name = "btnEditar";
@@ -86,6 +85,7 @@ namespace UberFrba.Abm_Chofer
             this.btnEditar.TabIndex = 9;
             this.btnEditar.Text = "Editar";
             this.btnEditar.UseVisualStyleBackColor = true;
+            this.btnEditar.Click += new System.EventHandler(this.btnEditar_Click);
             // 
             // btnAñadir
             // 
@@ -97,6 +97,7 @@ namespace UberFrba.Abm_Chofer
             this.btnAñadir.TabIndex = 8;
             this.btnAñadir.Text = "Añadir";
             this.btnAñadir.UseVisualStyleBackColor = true;
+            this.btnAñadir.Click += new System.EventHandler(this.btnAñadir_Click);
             // 
             // panel1
             // 
@@ -126,6 +127,7 @@ namespace UberFrba.Abm_Chofer
             this.btnBuscar.TabIndex = 5;
             this.btnBuscar.Text = "Buscar";
             this.btnBuscar.UseVisualStyleBackColor = true;
+            this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click);
             // 
             // btnLimpiar
             // 
@@ -137,6 +139,7 @@ namespace UberFrba.Abm_Chofer
             this.btnLimpiar.TabIndex = 6;
             this.btnLimpiar.Text = "Limpiar datos";
             this.btnLimpiar.UseVisualStyleBackColor = true;
+            this.btnLimpiar.Click += new System.EventHandler(this.btnLimpiar_Click);
             // 
             // txtDni
             // 
@@ -208,7 +211,7 @@ namespace UberFrba.Abm_Chofer
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(753, 441);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.btnEliminar);
+            this.Controls.Add(this.btnModificarHabilitacion);
             this.Controls.Add(this.btnEditar);
             this.Controls.Add(this.btnAñadir);
             this.Controls.Add(this.panel1);
@@ -224,7 +227,7 @@ namespace UberFrba.Abm_Chofer
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Button btnEliminar;
+        private System.Windows.Forms.Button btnModificarHabilitacion;
         private System.Windows.Forms.Button btnEditar;
         private System.Windows.Forms.Button btnAñadir;
         private System.Windows.Forms.Panel panel1;

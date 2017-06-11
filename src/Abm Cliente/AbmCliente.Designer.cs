@@ -29,7 +29,7 @@ namespace UberFrba.Abm_Cliente
         private void InitializeComponent()
         {
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.btnEliminar = new System.Windows.Forms.Button();
+            this.btnModificarHabilitacion = new System.Windows.Forms.Button();
             this.btnEditar = new System.Windows.Forms.Button();
             this.btnAñadir = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -63,23 +63,21 @@ namespace UberFrba.Abm_Cliente
             this.dataGridView1.Size = new System.Drawing.Size(869, 158);
             this.dataGridView1.TabIndex = 13;
             // 
-            // btnEliminar
+            // btnModificarHabilitacion
             // 
-            this.btnEliminar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnEliminar.Enabled = false;
-            this.btnEliminar.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnEliminar.Location = new System.Drawing.Point(807, 376);
-            this.btnEliminar.Name = "btnEliminar";
-            this.btnEliminar.Size = new System.Drawing.Size(150, 32);
-            this.btnEliminar.TabIndex = 16;
-            this.btnEliminar.Text = "Eliminar";
-            this.btnEliminar.UseVisualStyleBackColor = true;
-            this.btnEliminar.Click += new System.EventHandler(this.btnEliminar_Click);
+            this.btnModificarHabilitacion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnModificarHabilitacion.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnModificarHabilitacion.Location = new System.Drawing.Point(807, 376);
+            this.btnModificarHabilitacion.Name = "btnModificarHabilitacion";
+            this.btnModificarHabilitacion.Size = new System.Drawing.Size(150, 32);
+            this.btnModificarHabilitacion.TabIndex = 16;
+            this.btnModificarHabilitacion.Text = "Habilitar/Deshabilitar";
+            this.btnModificarHabilitacion.UseVisualStyleBackColor = true;
+            this.btnModificarHabilitacion.Click += new System.EventHandler(this.btnModificarHabilitacion_Click);
             // 
             // btnEditar
             // 
             this.btnEditar.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnEditar.Enabled = false;
             this.btnEditar.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnEditar.Location = new System.Drawing.Point(370, 376);
             this.btnEditar.Name = "btnEditar";
@@ -129,7 +127,7 @@ namespace UberFrba.Abm_Cliente
             this.btnBuscar.TabIndex = 5;
             this.btnBuscar.Text = "Buscar";
             this.btnBuscar.UseVisualStyleBackColor = true;
-            this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click_1);
+            this.btnBuscar.Click += new System.EventHandler(this.btnBuscar_Click);
             // 
             // btnLimpiar
             // 
@@ -141,6 +139,7 @@ namespace UberFrba.Abm_Cliente
             this.btnLimpiar.TabIndex = 6;
             this.btnLimpiar.Text = "Limpiar datos";
             this.btnLimpiar.UseVisualStyleBackColor = true;
+            this.btnLimpiar.Click += new System.EventHandler(this.btnLimpiar_Click);
             // 
             // txtDni
             // 
@@ -212,7 +211,7 @@ namespace UberFrba.Abm_Cliente
             this.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.ClientSize = new System.Drawing.Size(1045, 482);
             this.Controls.Add(this.dataGridView1);
-            this.Controls.Add(this.btnEliminar);
+            this.Controls.Add(this.btnModificarHabilitacion);
             this.Controls.Add(this.btnEditar);
             this.Controls.Add(this.btnAñadir);
             this.Controls.Add(this.panel1);
@@ -228,7 +227,7 @@ namespace UberFrba.Abm_Cliente
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.Button btnEliminar;
+        private System.Windows.Forms.Button btnModificarHabilitacion;
         private System.Windows.Forms.Button btnEditar;
         private System.Windows.Forms.Button btnAñadir;
         private System.Windows.Forms.Panel panel1;

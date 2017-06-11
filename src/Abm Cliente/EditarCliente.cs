@@ -31,7 +31,7 @@ namespace UberFrba.Abm_Cliente
             clienteId = numeroCliente;
 
             conexion.Open();
-
+            
             String query = "SELECT * FROM OSNR.Usuario JOIN OSNR.Cliente ON usu_id = cli_id_usuario WHERE cli_id = '" + numeroCliente + "'";
 
             SqlCommand listar = new SqlCommand(query, conexion);
@@ -41,10 +41,10 @@ namespace UberFrba.Abm_Cliente
             adapter.SelectCommand = listar;
             adapter.Fill(tabla);
 
-            txtNombre.Enabled = false;
-            txtApellido.Enabled = false;
-            txtDocumento.Enabled = false;
-            dtpNacimiento.Enabled = false;
+            //txtNombre.Enabled = false;
+            //txtApellido.Enabled = false;
+            //txtDocumento.Enabled = false;
+            //dtpNacimiento.Enabled = false;
             
             txtNombre.Text = tabla.Rows[0]["usu_nombre"].ToString();
             txtApellido.Text = tabla.Rows[0]["usu_apellido"].ToString();
@@ -63,9 +63,9 @@ namespace UberFrba.Abm_Cliente
         {
             if (camposCompletos())
             {
-                if (existeEmail())
+                if (existeTelefono())
                 {
-                    MessageBox.Show("El email ya se encuentra en uso por otro usuario");
+                    MessageBox.Show("El telefono ya se encuentra en uso por otro usuario");
                 }
                 else
                 {
@@ -77,10 +77,10 @@ namespace UberFrba.Abm_Cliente
             }
         }
 
-        private bool existeEmail()
+        private bool existeTelefono()
         {
             conexion.Open();
-            String query = "SELECT usu_id FROM OSNR.Usuario JOIN OSNR.Cliente ON usu_id = cli_id_usuario WHERE usu_mail = '" + txtEmail.Text + "' AND cli_id <> '" + clienteId + "'";
+            String query = "SELECT usu_id FROM OSNR.Usuario JOIN OSNR.Cliente ON usu_id = cli_id_usuario WHERE usu_telefono = '" + txtTelefono.Text + "' AND cli_id <> '" + clienteId + "'";
 
             SqlCommand listar = new SqlCommand(query, conexion);
 
