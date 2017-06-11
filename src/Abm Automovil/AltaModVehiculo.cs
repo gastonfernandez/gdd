@@ -16,18 +16,20 @@ namespace autom
     public partial class AltaModVehiculo : Form
     {
 
-        ListViewItem item;
+        Int64 idAuto = 0;
         AbmAutomovil cv;
         BaseDeDatos db = new BaseDeDatos();
         private SqlConnection conexion = new SqlConnection(Config.strConnection);
 
-        public AltaModVehiculo(ListViewItem itm, AbmAutomovil cveh)
+        public AltaModVehiculo(Int64 idA, AbmAutomovil cveh)
         {
-            this.item = itm;
-            this.cv = cveh;
-            if (this.item != null)
-                llenarCamposVista();
             InitializeComponent();
+            if (idA != 0)
+            {
+                this.idAuto = idA;
+                Object auto = recuperarVehiculoCompleto(idA);
+                //llenarCamposVista();
+            }
             LLenarComboMarca();
             llenarComboModelo(comboSelec(comboMarca).Value);
             LLenarComboTurno();
@@ -36,25 +38,33 @@ namespace autom
 
         }
 
-        public void llenarCamposVista()
+        public Object recuperarVehiculoCompleto(Int64 id)
         {
-            //String query = "select distinct veh_id_modelo,veh_id_chofer, veh_patente,veh_licencia,veh_rodado,veh_habilitado, vt.auttur_id_vehiculo ";
-            //query += "from OSNR.vehiculo v join OSNR.vehiculoturno vt on vt.auttur_id_vehiculo = v.veh_id ";
-            //query += "where veh_id =" + this.item.Text;
-            //DataTable dtAuto = db.select_query(query);
-            //DataTable dtAutoTurno = db.select_query("select auttur_id_turno from OSNR.vehiculo v join OSNR.vehiculoturno vt on vt.auttur_id_vehiculo = v.veh_id where v.veh_id = " + this.item.Text);
+            conexion.Open();
+            Object[] auto = new Object[7];
 
-            //DataRow auto = dtAuto.Rows[0];
-            //DataRow autoTurno = dtAutoTurno.Rows[0];
+            String query = "select veh_id, veh_id_modelo, veh_id_chofer, veh_patente, veh_licencia, veh_rodado, veh_habilitado ";
+            query += "from OSNR.Vehiculo "; 
+            query += "where veh_id =" + id;
 
-            //txtModelo.Text = item.SubItems[2].Text;
-            ////comboMarca.seleccionado = al id de marca relacionado con el modelo recuperado
-            //txtPatente.Text = item.SubItems[0].Text;
-            //txtLicencia.Text = Convert.ToString(auto["veh_licencia"]);
-            //txtRodado.Text = Convert.ToString(auto["veh_rodado"]);
-            ////comboActivo.seleccionado: id del combo = al valor que traiga Convert.ToByte(auto["veh_habilitado"]);
-            ////comboTurno.seleccionado: id del combo = al valor que traiga Convert.ToInt64(autoTurno["auttur_id_turno"]);
-            ////chofer: Id de la lista seleccionado = Convert.ToByte(auto["veh_id_chofer"]);
+            DataTable dt = db.select_query(query);
+
+            DataRow row = dt.Rows[0];
+                auto[0] = Convert.ToString(row["veh_id"]);
+                auto[1] = Convert.ToString(row["veh_id_modelo"]);
+                auto[2] = Convert.ToString(row["veh_id_chofer"]);
+                auto[3] = Convert.ToString(row["veh_patente"]);
+                auto[4] = Convert.ToString(row["veh_licencia"]);
+                auto[5] = Convert.ToString(row["veh_rodado"]);
+                auto[6] = Convert.ToString(row["veh_habilitado"]);
+
+            conexion.Close();
+            return auto;
+        }
+
+        public void llenarCamposVista(Object[] auto)
+        {
+            //falta llenar los campos
         }
 
         public void llenarComboActivo()
@@ -136,7 +146,7 @@ namespace autom
         {
             try
             {
-                if (item == null)
+                if (idAuto == 0)
                 {
                     nuevoAutomovil();
                 }
@@ -165,7 +175,9 @@ namespace autom
             query += "veh_licencia = " + txtLicencia.Text + ", ";
             query += "veh_rodado = " + txtRodado.Text + ", ";
             query += "veh_habilitado = " + comboActivo.ValueMember.ToString();
-            query += " where veh_id = " + item.Text;
+            query += " where veh_id = " + idAuto;
+
+            //falta revisar
 
         }
 
@@ -226,8 +238,8 @@ namespace autom
         public void validarUnicidadChofer(Int64 idChofer)
         {
             String query = "select veh_id from OSNR.vehiculo v join OSNR.chofer c on v.veh_id_chofer = c.cho_id where veh_habilitado = 1 and c.cho_id = " + idChofer.ToString();
-            if (item != null)
-                query += " and veh_id <> " + item.Text;
+            if (idAuto != 0)
+                query += " and veh_id <> " + idAuto;
             DataTable dt = db.select_query(query);
             if (dt.Rows.Count > 0)
                 throw new Exception("El chofer seleccionado ya tiene asignado un vehiculo activo");           
@@ -236,8 +248,8 @@ namespace autom
         public void validarPatente()
         {
             String query = "select veh_id from OSNR.vehiculo where veh_habilitado = 1 and veh_patente = '" + txtPatente.Text + "'";
-            if (item != null)
-                query += " and veh_id <> " + item.Text;
+            if (idAuto != 0)
+                query += " and veh_id <> " + idAuto;
             DataTable dt = db.select_query(query);
             if (dt.Rows.Count > 0)
                 throw new Exception("Ya existe un Automovil con la patente ingresada");   

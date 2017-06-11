@@ -69,17 +69,6 @@ namespace autom
             dgvVehiculos.DataSource = dsVehiculos;
             dgvVehiculos.DataMember = "vehiculo";
 
-            //foreach (DataRow row in dt.Rows)
-            //{
-            //    ListViewItem item = new ListViewItem(Convert.ToString(row["veh_id"]));//no deberia mostrarse
-            //    item.SubItems.Add(Convert.ToString(row["veh_patente"]));
-            //    item.SubItems.Add(Convert.ToString(row["mar_nombre"]));
-            //    item.SubItems.Add(Convert.ToString(row["mod_nombre"]));
-            //    item.SubItems.Add(Convert.ToString(row["usu_nombre"]));
-            //    item.SubItems.Add(Convert.ToByte(row["veh_habilitado"]) == 1 ? "Activo" : "Inactivo");
-
-            //    listaConsulta.Items.Add(item);
-            //}
             conexion.Close();
         }
 
@@ -90,8 +79,7 @@ namespace autom
 
         private void altaVehiculo_Click(object sender, EventArgs e)
         {
-            ListViewItem itm = null;
-            AltaModVehiculo amv = new AltaModVehiculo(itm, this);
+            AltaModVehiculo amv = new AltaModVehiculo(0, this);
             amv.Show();
             this.Hide();   
         }
@@ -124,6 +112,17 @@ namespace autom
             }
         }
 
+        private void btnModificar_Click(object sender, EventArgs e)
+        {
+            if (dgvVehiculos.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Debe seleccionar un automovil para modificarlo");
+                return;
+            }
+            AltaModVehiculo amv = new AltaModVehiculo(Convert.ToInt64(dgvVehiculos.SelectedRows[0].Cells[0].Value), this);
+            amv.Show();
+            this.Hide();
+        }
     }
 
 }
