@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using UberFrba.Mappings;
 
 namespace UberFrba.Abm_Chofer
 {
@@ -15,8 +16,8 @@ namespace UberFrba.Abm_Chofer
     {
         Validacion v = new Validacion();
         SqlConnection conexion;
-        decimal chofer;
-        List<EditarChofer> choferesAsociados = new List<EditarChofer>();
+        String ChoferId = null;
+        List<EditarChofer> afiliadosChoferes = new List<EditarChofer>();
 
         public EditarChofer()
         {
@@ -25,9 +26,9 @@ namespace UberFrba.Abm_Chofer
             dtpNacimiento.Value = Config.fecha;
         }
 
-        public void cargarDatos(decimal numeroChofer)
+        public void cargarDatos(String numeroChofer)
         {
-            chofer = numeroChofer;
+            ChoferId = numeroChofer;
 
             conexion.Open();
 
@@ -40,10 +41,10 @@ namespace UberFrba.Abm_Chofer
             adapter.SelectCommand = listar;
             adapter.Fill(tabla);
 
-            txtNombre.Enabled = false;
-            txtApellido.Enabled = false;
-            txtDocumento.Enabled = false;
-            dtpNacimiento.Enabled = false;
+            //txtNombre.Enabled = false;
+            //txtApellido.Enabled = false;
+            //txtDocumento.Enabled = false;
+            //dtpNacimiento.Enabled = false;
 
             txtNombre.Text = tabla.Rows[0]["usu_nombre"].ToString();
             txtApellido.Text = tabla.Rows[0]["usu_apellido"].ToString();
@@ -53,7 +54,7 @@ namespace UberFrba.Abm_Chofer
 
             txtTelefono.Text = tabla.Rows[0]["usu_telefono"].ToString();
             txtEmail.Text = tabla.Rows[0]["usu_mail"].ToString();
-            dtpNacimiento.Text = tabla.Rows[0]["usua_fecha_nacimiento"].ToString();
+            dtpNacimiento.Text = tabla.Rows[0]["usu_fecha_nacimiento"].ToString();
 
             conexion.Close();
         }
@@ -62,21 +63,24 @@ namespace UberFrba.Abm_Chofer
         {
             if (camposCompletos())
             {
-                if (existeEmail())
+                if (existeTelefono())
                 {
-                    MessageBox.Show("El email ya se encuentra en uso por otro usuario");
+                    MessageBox.Show("El telefono ya se encuentra en uso por otro usuario");
                 }
                 else
                 {
                     this.DialogResult = DialogResult.OK;
+                    guardarDatos();
+                    MessageBox.Show("Datos guardados correctamente!");
+                    this.Close();
                 }
             }
         }
 
-        private bool existeEmail()
+        private bool existeTelefono()
         {
             conexion.Open();
-            String query = "SELECT usu_id FROM OSNR.Usuario JOIN OSNR.Chofer ON usu_id = cho_id_usuario WHERE usu_mail = '" + txtEmail.Text + "' AND cho_id <> '" + chofer + "'";
+            String query = "SELECT usu_id FROM OSNR.Usuario JOIN OSNR.Chofer ON usu_id = cho_id_usuario WHERE usu_telefono = '" + txtTelefono.Text + "' AND cho_id <> '" + ChoferId + "'";
 
             SqlCommand listar = new SqlCommand(query, conexion);
 
@@ -92,56 +96,20 @@ namespace UberFrba.Abm_Chofer
             return false;
         }
 
-        public SqlCommand generarComandoSQL()
-        {
-            SqlCommand guardar;
-            guardar = new SqlCommand();
-            guardar.CommandType = CommandType.StoredProcedure;
-
-            guardar.CommandText = "OSNR.ModificarChofer";
-
-            guardar.Parameters.Add("@Chofer", SqlDbType.Decimal).Value = chofer;
-            guardar.Parameters.Add("@Nombre", SqlDbType.VarChar).Value = txtNombre.Text;
-            guardar.Parameters.Add("@Apellido", SqlDbType.VarChar).Value = txtApellido.Text;
-            guardar.Parameters.Add("@Documento", SqlDbType.Decimal).Value = txtDocumento.Text;
-
-            guardar.Parameters.Add("@Domicilio", SqlDbType.VarChar).Value = txtDomicilio.Text;
-
-            guardar.Parameters.Add("@Telefono", SqlDbType.Decimal).Value = txtTelefono.Text;
-            guardar.Parameters.Add("@Email", SqlDbType.VarChar).Value = txtEmail.Text;
-            guardar.Parameters.Add("@FechaNac", SqlDbType.DateTime).Value = dtpNacimiento.Text;
-
-            return guardar;
-        }
-
         private void guardarDatos()
         {
-            conexion.Open();
+            Dictionary<String, DbTypedValue> campos = new Dictionary<String, DbTypedValue>();
+            campos.Add("ChoferId", new DbTypedValue(ChoferId, SqlDbType.Decimal));
+            campos.Add("Nombre", new DbTypedValue(txtNombre.Text, SqlDbType.VarChar));
+            campos.Add("Apellido", new DbTypedValue(txtApellido.Text, SqlDbType.VarChar));
+            campos.Add("Dni", new DbTypedValue(txtDocumento.Text, SqlDbType.Decimal));
+            campos.Add("Direccion", new DbTypedValue(txtDomicilio.Text, SqlDbType.VarChar));
+            campos.Add("Telefono", new DbTypedValue(txtTelefono.Text, SqlDbType.Decimal));
+            campos.Add("Email", new DbTypedValue(txtEmail.Text, SqlDbType.VarChar));
+            campos.Add("FechaNac", new DbTypedValue(dtpNacimiento.Text, SqlDbType.DateTime));
 
-            if (this.Tag.ToString() == "Agregar")
-            {
-                SqlCommand nuevoIdChofer = new SqlCommand("OSNR.ObtenerNuevoIdChofer", conexion);
-                nuevoIdChofer.CommandType = CommandType.StoredProcedure;
-
-                var nuevoId = nuevoIdChofer.Parameters.Add("@id", SqlDbType.Decimal);
-                nuevoId.Direction = ParameterDirection.Output;
-                SqlDataReader dataId = nuevoIdChofer.ExecuteReader();
-                dataId.Close();
-                chofer = decimal.Parse(nuevoId.Value.ToString());
-            }
-
-            SqlTransaction transaccion;
-
-            transaccion = conexion.BeginTransaction("Transaccion");
-
-            SqlCommand comando = generarComandoSQL();
-            comando.Connection = conexion;
-            comando.Transaction = transaccion;
-
-            comando.ExecuteNonQuery();
-
-            transaccion.Commit();
-            conexion.Close();
+            Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
+            new BaseDeDatos().ExecSP("OSNR.ModificarOCrearChofer", campos, errorMensaje);
         }
 
         private bool camposCompletos()
@@ -186,34 +154,14 @@ namespace UberFrba.Abm_Chofer
             return System.Text.RegularExpressions.Regex.IsMatch(cadena, @"^\d+$");
         }
 
-        private void btnCancelar_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txtNombre_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void txtNombre_KeyPress(object sender, KeyPressEventArgs e)
         {
             v.soloLetras(e);
         }
 
-        private void txtApellido_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void txtApellido_KeyPress(object sender, KeyPressEventArgs e)
         {
             v.soloLetras(e);
-        }
-
-        private void txtDocumento_KeyUp(object sender, KeyEventArgs e)
-        {
-
         }
 
         private void txtDocumento_KeyPress(object sender, KeyPressEventArgs e)
