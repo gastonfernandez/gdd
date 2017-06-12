@@ -187,6 +187,9 @@
     <EmbeddedResource Include="Abm Turno\FormEditarTurno.resx">
       <DependentUpon>FormEditarTurno.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Facturacion\FacturacionCliente.resx">
+      <DependentUpon>FacturacionCliente.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Listado Estadistico\ListadoEstadistico.resx">
       <DependentUpon>ListadoEstadistico.cs</DependentUpon>
     </EmbeddedResource>

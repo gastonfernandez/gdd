@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using UberFrba.Facturacion;
 using UberFrba.Pagina_Principal;
 using UberFrba.Rendicion_Viajes;
 
@@ -18,7 +19,7 @@ namespace UberFrba
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new InicioSesion());
+            Application.Run(new FacturacionCliente());
         }
     }
 }

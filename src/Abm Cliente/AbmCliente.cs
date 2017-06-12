@@ -16,10 +16,25 @@ namespace UberFrba.Abm_Cliente
     {
         SqlConnection conexion;
         Validacion v = new Validacion();
+        public string idClienteSeleccionado = null;
 
-        public AbmCliente()
+        public AbmCliente(Boolean useAsSearch)
         {
             InitializeComponent();
+            if (useAsSearch)
+            {
+                this.btnAñadir.Visible = false;
+                this.btnEditar.Visible = false;
+                this.btnModificarHabilitacion.Visible = false;
+                this.btnSeleccionar.Visible = true;
+            }
+            else
+            {
+                this.btnAñadir.Visible = true;
+                this.btnEditar.Visible = true;
+                this.btnModificarHabilitacion.Visible = true;
+                this.btnSeleccionar.Visible = false;
+            }
             conexion = new SqlConnection(@Config.strConnection);
             cargarClientes();
         }
@@ -132,6 +147,17 @@ namespace UberFrba.Abm_Cliente
         private void txtNombre_KeyPress(object sender, KeyPressEventArgs e)
         {
             v.soloLetras(e);
+        }
+
+        private void btnSeleccionar_Click(object sender, EventArgs e)
+        {
+            if (this.dataGridView1.SelectedRows.Count != 1)
+            {
+                MessageBox.Show("Debe seleccionar un cliente");
+                return;
+            }
+            this.idClienteSeleccionado = this.dataGridView1.SelectedRows[0].Cells[0].Value.ToString();
+            this.Close();
         }
 
     }

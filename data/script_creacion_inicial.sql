@@ -198,13 +198,12 @@ CREATE TABLE OSNR.Viaje (
 	via_id_cliente int REFERENCES OSNR.Cliente NOT NULL,
 	via_id_vehiculo int REFERENCES OSNR.Vehiculo NOT NULL,
 	via_id_turno int REFERENCES OSNR.Turno NOT NULL
-	--CONSTRAINT [UQ_Viaje] UNIQUE (via_fecha_inicio, via_id_cliente) -- Un Cliente no puede estar en la misma fecha en el mismo viaje.. TODO esto pasa???
 	)
 GO
 
 CREATE TABLE OSNR.Rendicion (
 	ren_id int IDENTITY(1,1) PRIMARY KEY,
-	ren_numero int UNIQUE,
+	ren_numero int UNIQUE NOT NULL,
 	ren_importe numeric(18,2) NOT NULL,
 	ren_fecha date NOT NULL,
 	ren_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
@@ -914,6 +913,7 @@ CREATE PROCEDURE OSNR.CrearRendicion
 @idChofer int,
 @porcentaje numeric(18, 2)
 AS
+
 	IF(NOT EXISTS (SELECT cho_id from OSNR.Chofer WHERE cho_id = @idChofer AND cho_habilitado = 1))
 		THROW 60001, 'El chofer no existe o no esta habilitado', 1
 
@@ -944,12 +944,12 @@ AS
 				CAST(via_fecha_inicio AS DATE)=@fecha
 	OPEN CViajesRendicion
 
+	DECLARE @rendicionId INT
 	BEGIN TRY
 		BEGIN TRANSACTION
 			--Creo la rendicion
 			INSERT INTO OSNR.Rendicion(ren_importe, ren_fecha, ren_id_chofer, ren_id_turno)
 			VALUES (@valorTotal, @fecha, @idChofer, @idTurno)
-			DECLARE @rendicionId INT
 			SET @rendicionId = @@IDENTITY
 
 			-------------------------------------
@@ -975,4 +975,31 @@ AS
 
 	CLOSE CViajesRendicion
 	DEALLOCATE CViajesRendicion
+
+	SELECT	via_fecha_inicio FechaInicioViaje,
+			via_fecha_fin FechaFinViaje,
+			via_cantidad_km CantidadKmViaje,
+			ucli.usu_nombre NombreCliente,
+			(tur_precio_base + tur_valor_km * via_cantidad_km) AS ValorViaje,
+			((tur_precio_base + tur_valor_km * via_cantidad_km) * renvia_porcentaje /100) GananciaChofer
+	FROM	OSNR.RendicionViaje
+			JOIN OSNR.Viaje on via_id=renvia_id_viaje
+			JOIN OSNR.Turno on tur_id=via_id_turno
+			JOIN OSNR.Cliente on cli_id=via_id_cliente
+			JOIN OSNR.Usuario ucli on usu_id=cli_id_usuario
+	WHERE	renvia_id_rendicion = @rendicionId
 GO
+
+CREATE PROCEDURE OSNR.ObtenerRendicion
+@fecha date,
+@idTurno int,
+@idChofer int
+AS
+	SELECT	ren_id, ren_numero, ren_importe
+	FROM OSNR.Rendicion
+	WHERE 
+		@fecha=ren_fecha AND
+		@idChofer=ren_id_chofer AND
+		@idTurno=ren_id_turno
+GO
+
