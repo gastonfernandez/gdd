@@ -16,25 +16,25 @@ DECLARE @fk_name varchar(max)
 DECLARE @sql varchar(max)
 
 -- Borro las check constraints
-DECLARE tables_in_schema CURSOR FOR 
+DECLARE tables_in_schema_for_checks CURSOR FOR 
 SELECT f.name, Object_NAME(f.parent_object_id)
 FROM sys.check_constraints AS f JOIN
 sys.schemas AS s ON s.schema_id = f.schema_id
 WHERE s.name = 'OSNR'
 
 
-OPEN tables_in_schema 
-FETCH tables_in_schema INTO  @fk_name, @table_name
+OPEN tables_in_schema_for_checks 
+FETCH tables_in_schema_for_checks INTO  @fk_name, @table_name
 
 WHILE (@@FETCH_STATUS = 0) 
 BEGIN 
 	SET @sql = 'ALTER TABLE OSNR.' + @table_name + ' DROP CONSTRAINT ' + @fk_name
 	EXEC(@sql)
-	FETCH tables_in_schema INTO  @fk_name, @table_name
+	FETCH tables_in_schema_for_checks INTO  @fk_name, @table_name
 END 
 
-CLOSE tables_in_schema 
-DEALLOCATE tables_in_schema
+CLOSE tables_in_schema_for_checks 
+DEALLOCATE tables_in_schema_for_checks
 
 --Borro los triggers
 SELECT @names_triggers = coalesce(@names_triggers + ', ','') + '[OSNR].' + t.NAME
@@ -209,7 +209,7 @@ GO
 
 CREATE TABLE OSNR.Viaje (
 	via_id int IDENTITY(1,1) PRIMARY KEY,
-	via_cantidad_km int NOT NULL,
+	via_cantidad_km int NOT NULL CHECK (via_cantidad_km > 0), -- Los viajes deben si o si tener KM mayor a 0
 	via_fecha_inicio datetime NOT NULL,
 	via_fecha_fin datetime NOT NULL,
 	via_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
@@ -292,10 +292,10 @@ INSERT INTO OSNR.Usuario (usu_nombre, usu_apellido, usu_dni, usu_direccion, usu_
 GO
 INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
 	values(1, 1)
-GO
-
 INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
 	values(1, 2)
+INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
+	values(1, 3)
 
 /* Agregamos las funcionalidades.. */
 INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('ABM Rol')
@@ -322,7 +322,7 @@ INSERT INTO OSNR.FuncionalidadRol values (1,8) -- Facturacion de Cliente
 INSERT INTO OSNR.FuncionalidadRol values (1,9) -- Listados Estadistico
 
 -- Cliente
---INSERT INTO OSNR.FuncionalidadRol values (2,6) -- QUE BOSTA PUEDE HACER EL CLIENTE???
+INSERT INTO OSNR.FuncionalidadRol values (2,6) -- Registro de Viaje
 
 
 -- Chofer
