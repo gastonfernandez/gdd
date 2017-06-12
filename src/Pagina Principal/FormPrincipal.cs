@@ -18,6 +18,7 @@ using UberFrba.Listado_Estadistico;
 using autom;
 using UberFrba.Abm_Cliente;
 using UberFrba.Abm_Chofer;
+using UberFrba.Registro_Viajes;
 
 namespace UberFrba
 {
@@ -130,7 +131,7 @@ namespace UberFrba
 
         private void registroDeViajeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-           // abrirFormulario(new RegistroViaje());
+            abrirFormulario(new RegistroViaje());
         }
 
         private void rendicionDeViajeToolStripMenuItem_Click(object sender, EventArgs e)
