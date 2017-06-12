@@ -116,7 +116,7 @@ namespace UberFrba
 
         private void aBMChoferToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            abrirFormulario(new AbmChofer());
+            abrirFormulario(new AbmChofer(false));
         }
 
         private void aBMAutomovilToolStripMenuItem_Click(object sender, EventArgs e)

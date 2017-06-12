@@ -5,6 +5,7 @@ GO
 DECLARE @names_sp varchar(max)
 DECLARE @names_func varchar(max)
 DECLARE @names_veiws varchar(max)
+DECLARE @names_secs varchar(max)
 DECLARE @names_tables varchar(max)
 DECLARE @names_types varchar(max)
 DECLARE @names_triggers varchar(max)
@@ -34,7 +35,6 @@ WHERE s.schema_id = f.schema_id AND s.name = 'OSNR' AND  f.type IN ('FN', 'IF', 
 	
 SET @sql = 'DROP FUNCTION ' + @names_func
 EXEC(@sql)
-
 
 --Borro las vistas
 SELECT @names_veiws = coalesce(@names_veiws + ', ','') + '[OSNR].' + TABLE_NAME
@@ -70,14 +70,20 @@ END
 CLOSE tables_in_schema 
 DEALLOCATE tables_in_schema
 
-
-
 --Borro las tablas excepto la maestra
 SELECT @names_tables = coalesce(@names_tables + ', ','') + '[OSNR].' + TABLE_NAME
 FROM GD1C2017.INFORMATION_SCHEMA.TABLES
 WHERE TABLE_SCHEMA = 'OSNR' and TABLE_TYPE = 'BASE TABLE'
 
 SET @sql = 'DROP TABLE ' + @names_tables
+EXEC(@sql)
+
+--Borro las secuencias
+SELECT @names_secs = coalesce(@names_secs + ', ','') + '[OSNR].' + SEQUENCE_NAME
+FROM GD1C2017.INFORMATION_SCHEMA.SEQUENCES
+WHERE SEQUENCE_SCHEMA = 'OSNR'
+
+SET @sql = 'DROP SEQUENCE ' + @names_secs
 EXEC(@sql)
 
 --Borro los User define types
@@ -192,12 +198,13 @@ CREATE TABLE OSNR.Viaje (
 	via_id_cliente int REFERENCES OSNR.Cliente NOT NULL,
 	via_id_vehiculo int REFERENCES OSNR.Vehiculo NOT NULL,
 	via_id_turno int REFERENCES OSNR.Turno NOT NULL
+	--CONSTRAINT [UQ_Viaje] UNIQUE (via_fecha_inicio, via_id_cliente) -- Un Cliente no puede estar en la misma fecha en el mismo viaje.. TODO esto pasa???
 	)
 GO
 
 CREATE TABLE OSNR.Rendicion (
 	ren_id int IDENTITY(1,1) PRIMARY KEY,
-	ren_numero int NOT NULL UNIQUE,
+	ren_numero int UNIQUE,
 	ren_importe numeric(18,2) NOT NULL,
 	ren_fecha date NOT NULL,
 	ren_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
@@ -208,7 +215,7 @@ GO
 
 CREATE TABLE OSNR.RendicionViaje (
 	renvia_id_rendicion int REFERENCES OSNR.Rendicion NOT NULL,
-	renvia_id_viaje int REFERENCES OSNR.Viaje NOT NULL,
+	renvia_id_viaje int REFERENCES OSNR.Viaje UNIQUE NOT NULL, -- Un viaje no puede estar dos veces
 	renvia_porcentaje numeric(18,2) NOT NULL,
 	PRIMARY KEY(renvia_id_rendicion, renvia_id_viaje)
 )
@@ -490,6 +497,15 @@ INSERT INTO OSNR.Rendicion
 	WHERE	mas.Rendicion_Nro is not null
 	GROUP BY mas.Rendicion_Nro, mas.Rendicion_Fecha, cho_id, tur_id
 GO
+
+-- Secuencia para los numeros de rendiciones..
+DECLARE @maxRendicionNro INT = (SELECT MAX(ren_numero)+1 FROM OSNR.Rendicion)
+DECLARE @sql NVARCHAR(MAX)
+SET @sql = 'CREATE SEQUENCE OSNR.SecuenciaRendicionNumero AS INT
+			 START WITH '  + CAST(@maxRendicionNro AS VARCHAR) + '
+			 INCREMENT BY 1 MINVALUE 0 NO MAXVALUE'
+EXEC(@sql)
+ALTER TABLE OSNR.Rendicion ADD DEFAULT (NEXT VALUE FOR OSNR.SecuenciaRendicionNumero) FOR ren_numero
 
 INSERT INTO OSNR.RendicionViaje
 	(renvia_id_rendicion, renvia_id_viaje, renvia_porcentaje)
@@ -889,4 +905,74 @@ AS
 	tur_precio_base = @precioBase 
    WHERE tur_id = @turnoId
   END
+GO
+
+-- Rendicion
+CREATE PROCEDURE OSNR.CrearRendicion
+@fecha date,
+@idTurno int,
+@idChofer int,
+@porcentaje numeric(18, 2)
+AS
+	IF(NOT EXISTS (SELECT cho_id from OSNR.Chofer WHERE cho_id = @idChofer AND cho_habilitado = 1))
+		THROW 60001, 'El chofer no existe o no esta habilitado', 1
+
+	-- Obtengo el turno pedido
+	DECLARE @tur_valor_km numeric(18,2)
+	DECLARE @tur_precio_base numeric(18,2)
+	SELECT	@tur_valor_km = tur_valor_km, @tur_precio_base = tur_precio_base 
+	FROM	OSNR.Turno 
+	WHERE	tur_id=@idTurno AND tur_habilitado=1
+
+	IF @tur_valor_km IS NULL
+		THROW 60002, 'No existe el turno (o esta deshabilitado)..', 1
+	------------------------------------
+	-- Obtengo el valor total para la rendicion
+	DECLARE @valorTotal numeric(18, 2)
+	SELECT	@valorTotal = SUM((@tur_precio_base + @tur_valor_km * via_cantidad_km) * @porcentaje /100)
+	FROM	OSNR.Viaje 
+	WHERE	via_id_turno=@idTurno AND
+			via_id_chofer=@idChofer AND
+			CAST(via_fecha_inicio AS DATE)=@fecha
+
+	-------------------------------------
+	DECLARE CViajesRendicion CURSOR FOR
+		SELECT  via_id, via_cantidad_km
+		FROM	OSNR.Viaje
+		WHERE	via_id_turno=@idTurno AND
+				via_id_chofer=@idChofer AND
+				CAST(via_fecha_inicio AS DATE)=@fecha
+	OPEN CViajesRendicion
+
+	BEGIN TRY
+		BEGIN TRANSACTION
+			--Creo la rendicion
+			INSERT INTO OSNR.Rendicion(ren_importe, ren_fecha, ren_id_chofer, ren_id_turno)
+			VALUES (@valorTotal, @fecha, @idChofer, @idTurno)
+			DECLARE @rendicionId INT
+			SET @rendicionId = @@IDENTITY
+
+			-------------------------------------
+			-- Itero sobre todos los viajes que aplican..
+			DECLARE @via_id int
+			DECLARE @via_cantidad_km datetime
+		
+			FETCH CViajesRendicion INTO @via_id, @via_cantidad_km
+			WHILE(@@FETCH_STATUS = 0)
+				BEGIN
+				INSERT INTO OSNR.RendicionViaje(renvia_id_rendicion, renvia_id_viaje, renvia_porcentaje)
+					values(@rendicionId, @via_id, @porcentaje)
+				FETCH CVIajesRendicion INTO @via_id, @via_cantidad_km
+				END
+		COMMIT
+	END TRY
+	BEGIN CATCH
+		IF(@@TRANCOUNT > 0)
+			ROLLBACK TRANSACTION;
+
+		THROW 60003, 'La rendicion para ese dia, chofer y fecha ya existe..', 1
+	END CATCH
+
+	CLOSE CViajesRendicion
+	DEALLOCATE CViajesRendicion
 GO

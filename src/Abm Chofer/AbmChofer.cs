@@ -17,9 +17,25 @@ namespace UberFrba.Abm_Chofer
         SqlConnection conexion;
         Validacion v = new Validacion();
 
-        public AbmChofer()
+        public string idChoferSeleccionado = null;
+
+        public AbmChofer(Boolean useAsSearch)
         {
             InitializeComponent();
+            if (useAsSearch)
+            {
+                this.btnAñadir.Visible = false;
+                this.btnEditar.Visible = false;
+                this.btnModificarHabilitacion.Visible = false;
+                this.btnSeleccionar.Visible = true;
+            }
+            else
+            {
+                this.btnAñadir.Visible = true;
+                this.btnEditar.Visible = true;
+                this.btnModificarHabilitacion.Visible = true;
+                this.btnSeleccionar.Visible = false;
+            }
             conexion = new SqlConnection(@Config.strConnection);
             cargarChoferes();
         }
@@ -134,6 +150,17 @@ namespace UberFrba.Abm_Chofer
         private void txtNombre_KeyPress(object sender, KeyPressEventArgs e)
         {
             v.soloLetras(e);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (this.dataGridView1.SelectedRows.Count != 1)
+            {
+                MessageBox.Show("Debe seleccionar un chofer");
+                return;
+            }
+            this.idChoferSeleccionado = this.dataGridView1.SelectedRows[0].Cells[0].Value.ToString();
+            this.Close();
         }
 
     }
