@@ -226,13 +226,14 @@ CREATE TABLE OSNR.Factura (
 	fac_fecha_inicio datetime NOT NULL,
 	fac_fecha_fin datetime NOT NULL,
 	fac_importe numeric(18,2) NOT NULL,
-	fac_id_cliente int REFERENCES OSNR.Cliente NOT NULL
+	fac_id_cliente int REFERENCES OSNR.Cliente NOT NULL,
+	CONSTRAINT [UQ_Factura] UNIQUE (fac_fecha_inicio, fac_fecha_fin, fac_id_cliente)
 	)
 GO
 
 CREATE TABLE OSNR.FacturaViaje (
 	facvia_id_factura int REFERENCES OSNR.Factura NOT NULL,
-	facvia_id_viaje int REFERENCES OSNR.Viaje NOT NULL,
+	facvia_id_viaje int REFERENCES OSNR.Viaje UNIQUE NOT NULL, -- Un viaje no puede estar dos veces
 	PRIMARY KEY(facvia_id_factura, facvia_id_viaje)
 )
 
@@ -452,8 +453,9 @@ INSERT INTO OSNR.Factura
 SELECT		    Factura_Nro, 
 					Factura_Fecha, 
 					Factura_Fecha_Inicio, 
-					Factura_Fecha_Fin, 
-					sum(viaje_cant_kilometros*turno_valor_kilometro + turno_precio_base), 
+					Factura_Fecha_Fin,
+					(SELECT SUM(SQ.viaje_cant_kilometros*SQ.turno_valor_kilometro + SQ.turno_precio_base)
+						FROM (SELECT DISTINCT * FROM gd_esquema.Maestra masInner WHERE masInner.Factura_Nro=mas.Factura_Nro) SQ),
 					c.cli_id
 	FROM	gd_esquema.Maestra mas
 			join OSNR.Usuario us on us.usu_dni = Cliente_Dni
@@ -461,6 +463,16 @@ SELECT		    Factura_Nro,
 	WHERE Factura_Nro IS NOT NULL 
 	group by Factura_Nro,Factura_Fecha,Factura_Fecha_Inicio,Factura_Fecha_Fin,c.cli_id
 GO
+
+-- Secuencia para los numeros de facturas..
+DECLARE @maxFacturaNro INT = (SELECT MAX(fac_numero)+1 FROM OSNR.Factura)
+DECLARE @sql NVARCHAR(MAX)
+SET @sql = 'CREATE SEQUENCE OSNR.SecuenciaFacturaNumero AS INT
+			 START WITH '  + CAST(@maxFacturaNro AS VARCHAR) + '
+			 INCREMENT BY 1 MINVALUE 0 NO MAXVALUE'
+EXEC(@sql)
+ALTER TABLE OSNR.Factura ADD DEFAULT (NEXT VALUE FOR OSNR.SecuenciaFacturaNumero) FOR fac_numero
+--
 
 /* FacturaViaje */
 INSERT INTO OSNR.FacturaViaje
@@ -505,6 +517,7 @@ SET @sql = 'CREATE SEQUENCE OSNR.SecuenciaRendicionNumero AS INT
 			 INCREMENT BY 1 MINVALUE 0 NO MAXVALUE'
 EXEC(@sql)
 ALTER TABLE OSNR.Rendicion ADD DEFAULT (NEXT VALUE FOR OSNR.SecuenciaRendicionNumero) FOR ren_numero
+--
 
 INSERT INTO OSNR.RendicionViaje
 	(renvia_id_rendicion, renvia_id_viaje, renvia_porcentaje)
@@ -995,11 +1008,98 @@ CREATE PROCEDURE OSNR.ObtenerRendicion
 @idTurno int,
 @idChofer int
 AS
-	SELECT	ren_id, ren_numero, ren_importe
-	FROM OSNR.Rendicion
+	SELECT	ren_numero NumeroRendicion, ren_importe ImporteTotal
+	FROM	OSNR.Rendicion
 	WHERE 
-		@fecha=ren_fecha AND
-		@idChofer=ren_id_chofer AND
-		@idTurno=ren_id_turno
+			@fecha=ren_fecha AND
+			@idChofer=ren_id_chofer AND
+			@idTurno=ren_id_turno
 GO
 
+
+-- Factura
+CREATE PROCEDURE OSNR.CrearFactura
+@fechaInicio date,
+@fechaFin date,
+@idCliente int,
+@hoy date
+AS
+	IF(NOT EXISTS (SELECT cli_id from OSNR.Cliente WHERE cli_id = @idCliente AND cli_habilitado = 1))
+		THROW 60001, 'El cliente no existe o no esta habilitado', 1
+
+	------------------------------------
+	-- Obtengo el valor total para la factura
+	DECLARE @valorTotal numeric(18, 2)
+	SELECT	@valorTotal = SUM(tur_precio_base + tur_valor_km * via_cantidad_km)
+	FROM	OSNR.Viaje
+			JOIN OSNR.Turno on tur_id=via_id_turno
+	WHERE	via_id_cliente=@idCliente AND
+			CAST(via_fecha_inicio AS DATE) >= @fechaInicio AND
+			CAST(via_fecha_inicio AS DATE) <= @fechaFin
+
+	-------------------------------------
+	DECLARE CViajesFactura CURSOR FOR
+		SELECT  via_id, via_cantidad_km
+		FROM	OSNR.Viaje
+		WHERE	via_id_cliente=@idCliente AND
+				CAST(via_fecha_inicio AS DATE) >= @fechaInicio AND
+				CAST(via_fecha_inicio AS DATE) <= @fechaFin
+	OPEN CViajesFactura
+
+	DECLARE @facturaId INT
+	BEGIN TRY
+		BEGIN TRANSACTION
+			--Creo la factura
+			INSERT INTO OSNR.Factura(fac_fecha, fac_fecha_inicio, fac_fecha_fin, fac_importe, fac_id_cliente)
+			VALUES (@hoy, @fechaInicio, @fechaFin, @valorTotal, @idCliente)
+			SET @facturaId = @@IDENTITY
+
+			-------------------------------------
+			-- Itero sobre todos los viajes que aplican..
+			DECLARE @via_id int
+			DECLARE @via_cantidad_km datetime
+		
+			FETCH CViajesFactura INTO @via_id, @via_cantidad_km
+			WHILE(@@FETCH_STATUS = 0)
+				BEGIN
+				INSERT INTO OSNR.FacturaViaje(facvia_id_factura, facvia_id_viaje)
+					values(@facturaId, @via_id)
+				FETCH CViajesFactura INTO @via_id, @via_cantidad_km
+				END
+		COMMIT
+	END TRY
+	BEGIN CATCH
+		IF(@@TRANCOUNT > 0)
+			ROLLBACK TRANSACTION;
+
+		THROW 60003, 'La factura para esos dias y cliente ya existe..', 1
+	END CATCH
+
+	CLOSE CViajesFactura
+	DEALLOCATE CViajesFactura
+
+	SELECT	via_fecha_inicio FechaInicioViaje,
+			via_fecha_fin FechaFinViaje,
+			via_cantidad_km CantidadKmViaje,
+			ucho.usu_nombre NombreChofer,
+			(tur_precio_base + tur_valor_km * via_cantidad_km) AS ValorViaje
+	FROM	OSNR.FacturaViaje
+			JOIN OSNR.Viaje on via_id=facvia_id_viaje
+			JOIN OSNR.Turno on tur_id=via_id_turno
+			JOIN OSNR.Chofer on cho_id=via_id_chofer
+			JOIN OSNR.Usuario ucho on usu_id=cho_id_usuario
+	WHERE	facvia_id_factura = @facturaId
+GO
+
+CREATE PROCEDURE OSNR.ObtenerFactura
+@fechaInicio date,
+@fechaFin date,
+@idCliente int
+AS
+	SELECT	fac_numero NumeroFactura, fac_importe ImporteTotal
+	FROM	OSNR.Factura
+	WHERE 
+			CAST(fac_fecha_inicio AS DATE) = @fechaInicio AND
+			CAST(fac_fecha_fin AS DATE) = @fechaFin AND
+			@idCliente=fac_id_cliente
+GO

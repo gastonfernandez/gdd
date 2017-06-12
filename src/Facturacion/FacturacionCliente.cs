@@ -34,27 +34,28 @@ namespace UberFrba.Facturacion
             }
             Dictionary<String, DbTypedValue> campos = new Dictionary<String, DbTypedValue>();
             campos.Add("fechaInicio", new DbTypedValue(this.dtpFechaInicio.Value.ToString("yyyy-MM-dd"), SqlDbType.Date));
-            campos.Add("fechaFin", new DbTypedValue(this.dtpFechaInicio.Value.ToString("yyyy-MM-dd"), SqlDbType.Date));
+            campos.Add("fechaFin", new DbTypedValue(this.dtpFechaFin.Value.ToString("yyyy-MM-dd"), SqlDbType.Date));
             campos.Add("idCliente", new DbTypedValue(this.txtCliente.Text, SqlDbType.Decimal));
+            campos.Add("hoy", new DbTypedValue(Config.fecha.ToString("yyyy-MM-dd"), SqlDbType.Date));
 
             Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
-            SpExec sp = new SpExec(new BaseDeDatos(), "OSNR.CrearFacturacion", campos, errorMensaje, null);
+            SpExec sp = new SpExec(new BaseDeDatos(), "OSNR.CrearFactura", campos, errorMensaje, null);
             dataGridView1.DataSource = sp.ExecAndGetDataTable();
             if (!sp.huboError())
-                cargarDatosFacturacion();
+                cargarDatosFactura();
             else
                 dataGridView2.DataSource = null;
         }
 
-        private void cargarDatosFacturacion()
+        private void cargarDatosFactura()
         {
             Dictionary<String, DbTypedValue> campos = new Dictionary<String, DbTypedValue>();
             campos.Add("fechaInicio", new DbTypedValue(this.dtpFechaInicio.Value.ToString("yyyy-MM-dd"), SqlDbType.Date));
-            campos.Add("fechaFin", new DbTypedValue(this.dtpFechaInicio.Value.ToString("yyyy-MM-dd"), SqlDbType.Date));
+            campos.Add("fechaFin", new DbTypedValue(this.dtpFechaFin.Value.ToString("yyyy-MM-dd"), SqlDbType.Date));
             campos.Add("idCliente", new DbTypedValue(this.txtCliente.Text, SqlDbType.Decimal));
 
             Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
-            dataGridView2.DataSource = new BaseDeDatos().ExecSPAndGetData("OSNR.ObtenerFacturacion", campos, errorMensaje);
+            dataGridView2.DataSource = new BaseDeDatos().ExecSPAndGetData("OSNR.ObtenerFactura", campos, errorMensaje);
         }
 
         private void button1_Click(object sender, EventArgs e)

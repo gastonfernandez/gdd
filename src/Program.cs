@@ -19,7 +19,7 @@ namespace UberFrba
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FacturacionCliente());
+            Application.Run(new InicioSesion());
         }
     }
 }
