@@ -24,21 +24,24 @@ namespace autom
         public AltaModVehiculo(Int64 idA, AbmAutomovil cveh)
         {
             InitializeComponent();
-            if (idA != 0)
-            {
-                this.idAuto = idA;
-                Object auto = recuperarVehiculoCompleto(idA);
-                //llenarCamposVista();
-            }
+            dgvChofer.ReadOnly = false;
             LLenarComboMarca();
             llenarComboModelo(comboSelec(comboMarca).Value);
             LLenarComboTurno();
             LLenarListaChofer();
             llenarComboActivo();
+            cv = cveh;
+            if (idA != 0)
+            {
+                this.idAuto = idA;
+                Object[] auto = recuperarVehiculoCompleto(idA);
+                llenarCamposVista(auto);
+            }
+            
 
         }
 
-        public Object recuperarVehiculoCompleto(Int64 id)
+        public Object[] recuperarVehiculoCompleto(Int64 id)
         {
             conexion.Open();
             Object[] auto = new Object[7];
@@ -62,16 +65,51 @@ namespace autom
             return auto;
         }
 
+        public Int32 recuperarIdMarca(Int32 idModelo)
+        {
+            String query = "select distinct ma.mar_id ";
+            query += "from OSNR.marca ma ";
+            query += "join OSNR.modelo mo on mo.mod_id_marca = ma.mar_id ";
+            query += "where mod_id = " + idModelo ;
+
+            DataTable dt = db.select_query(query);
+            DataRow row = dt.Rows[0];
+
+            return Convert.ToInt32(row["mar_id"]);
+        }
+
         public void llenarCamposVista(Object[] auto)
         {
-            //falta llenar los campos
+            #region Marca y Modelo
+            Int32 idMarca = recuperarIdMarca(Convert.ToInt32(auto[1]));
+            foreach (Combo combo in (List<Combo>)comboMarca.DataSource)
+            {
+                if (combo.Value == idMarca)
+                    comboMarca.SelectedItem = combo;
+            }
+            llenarComboModelo(comboSelec(comboMarca).Value);
+            foreach (Combo combo in (List<Combo>)comboModelo.DataSource)
+            {
+                if (combo.Value == Convert.ToInt32(auto[1]))
+                    comboModelo.SelectedItem = combo;
+            }
+            #endregion
+
+            txtPatente.Text = auto[3].ToString();
+            txtLicencia.Text = auto[4].ToString();
+            txtRodado.Text = auto[5].ToString();
+            if (auto[6].ToString() == "True")
+                comboActivo.SelectedIndex = 1;
+            else
+                comboActivo.SelectedIndex = 0;
+
         }
 
         public void llenarComboActivo()
         {
             List<Combo> lista = new List<Combo>();
-            lista.Add(new Combo("Si", 1));
             lista.Add(new Combo("No", 0));
+            lista.Add(new Combo("Si", 1));
             comboActivo.DisplayMember = "act_id";
             comboActivo.ValueMember = "act_nombre";
             comboActivo.DataSource = lista; 
@@ -85,7 +123,6 @@ namespace autom
             foreach (DataRow row in dt.Rows)
                 lista.Add(new Combo(Convert.ToString(row["mar_nombre"]), Convert.ToInt32(row["mar_id"])));
             comboMarca.DisplayMember = "mar_id";
-            //lista.Add(new Combo("Chevrolet", 1));//sacar
             comboMarca.ValueMember = "mar_nombre";
             comboMarca.SelectedValue = lista[0];
             comboMarca.DataSource = lista;
@@ -105,7 +142,12 @@ namespace autom
 
         private void comboMarca_SelectedIndexChanged(object sender, EventArgs e)
         {
-            llenarComboModelo(comboSelec(comboMarca).Value);
+            try
+            {
+                llenarComboModelo(comboSelec(comboMarca).Value);
+            }
+            catch
+            { }
         }
 
         public void LLenarComboTurno()
@@ -115,7 +157,6 @@ namespace autom
             DataTable dt = db.select_query("select distinct tur_id, tur_descripcion from OSNR.turno");
             foreach (DataRow row in dt.Rows)
                 lista.Add(new Combo(Convert.ToString(row["tur_descripcion"]), Convert.ToInt32(row["tur_id"])));
-            //lista.Add(new Combo("Noche", 1));//sacar
             comboTurno.DisplayMember = "tur_id";
             comboTurno.ValueMember = "tur_descripcion";
             comboTurno.DataSource = lista; 
@@ -125,7 +166,7 @@ namespace autom
         {
             conexion.Open();
 
-            String query = "select u.usu_nombre, u.usu_apellido, c.cho_id from OSNR.usuario u join OSNR.chofer c on c.cho_id_usuario = u.usu_id";
+            String query = "select u.usu_nombre nombreChofer, u.usu_apellido apellidoChofer, c.cho_id idChofer from OSNR.usuario u join OSNR.chofer c on c.cho_id_usuario = u.usu_id order by 1";
             SqlDataAdapter daChoferes = new SqlDataAdapter(query, conexion);
             DataSet dsChoferes = new DataSet();
             daChoferes.Fill(dsChoferes, "chofer");
@@ -168,16 +209,16 @@ namespace autom
         {
             validarDatos();
 
-            String query = "update vehiculo set ";
+            String query = "update OSNR.vehiculo set ";
             query += "veh_id_modelo = " + recuperarIdModelo() + ", ";
-            query += "veh_id_chofer = " + Convert.ToInt64(dgvChofer.SelectedRows[0].Cells[2].Value.ToString()) + ", ";
-            query += "veh_patente = " + txtPatente.Text + ", ";
-            query += "veh_licencia = " + txtLicencia.Text + ", ";
-            query += "veh_rodado = " + txtRodado.Text + ", ";
-            query += "veh_habilitado = " + comboActivo.ValueMember.ToString();
+            query += "veh_id_chofer = " + Convert.ToInt64(dgvChofer.SelectedRows[0].Cells[2].Value) + ", ";
+            query += "veh_patente = '" + txtPatente.Text + "', ";
+            query += "veh_licencia = '" + txtLicencia.Text + "', ";
+            query += "veh_rodado = '" + txtRodado.Text + "', ";
+            query += "veh_habilitado = " + comboActivo.SelectedIndex;
             query += " where veh_id = " + idAuto;
 
-            //falta revisar
+            db.query(query);
 
         }
 
@@ -198,7 +239,8 @@ namespace autom
 
         public Int64 recuperarIdModelo()
         {
-            DataTable dt = db.select_query("select max(mod_id) as idModelo from OSNR.marca ma join OSNR.modelo mo on ma.mar_id = mo.mod_id_marca where ma.mar_id =" + comboSelec(comboMarca).Value.ToString() + " and mo.mod_id = " + Convert.ToInt64(dgvChofer.SelectedRows[0].Cells[2].Value.ToString()));
+            String query = "select max(mod_id) as idModelo from OSNR.marca ma join OSNR.modelo mo on ma.mar_id = mo.mod_id_marca where ma.mar_id =" + comboSelec(comboMarca).Value.ToString() + " and mo.mod_id = " + comboSelec(comboModelo).Value.ToString();
+            DataTable dt = db.select_query(query);
             DataRow row = dt.Rows[0];
             return Convert.ToInt64(row["idModelo"]);
         }

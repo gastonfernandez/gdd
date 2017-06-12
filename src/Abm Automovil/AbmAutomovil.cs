@@ -49,7 +49,7 @@ namespace autom
 
             Combo marca = (Combo)comboMarca.SelectedItem;
 
-            String query = "select distinct v.veh_id,v.veh_patente,mo.mod_nombre, ma.mar_nombre, u.usu_nombre,v.veh_habilitado ";
+            String query = "select distinct v.veh_id as autoId,v.veh_patente as autoPatente,mo.mod_nombre as modeloNombre, ma.mar_nombre as marcaNombre, u.usu_nombre as nombreChofer,v.veh_habilitado as habilitado ";
             query += "from OSNR.vehiculo v ";
             query += "join OSNR.chofer ch on ch.cho_id = v.veh_id_chofer ";
             query += "join OSNR.usuario u on u.usu_id = ch.cho_id_usuario ";
@@ -60,7 +60,7 @@ namespace autom
             query += "and (ma.mar_id= " + marca.Value + " or 0=" + marca.Value + ")";
             query += "and v.veh_patente like '%" + txtPatente.Text + "%' ";
             query += "and u.usu_nombre like '%" + txtChofer.Text + "%' ";
-            query += "order by veh_habilitado desc, 1 ";
+            query += "order by 6 desc, 1 ";
 
 
             SqlDataAdapter daVehiculos = new SqlDataAdapter(query, conexion);
@@ -68,7 +68,6 @@ namespace autom
             daVehiculos.Fill(dsVehiculos, "vehiculo");
             dgvVehiculos.DataSource = dsVehiculos;
             dgvVehiculos.DataMember = "vehiculo";
-
             conexion.Close();
         }
 
