@@ -719,8 +719,8 @@ AS
 select * 
 from OSNR.Viaje
 where via_id_chofer=@idChofer
-and  ( (@fechaDesde between via_fecha_inicio and via_fecha_fin)
-		or (@fechaHasta between via_fecha_inicio and via_fecha_fin)
+and  ( (@fechaDesde>=  via_fecha_inicio and  @fechaDesde<=via_fecha_fin)
+		or (@fechaHasta >= via_fecha_inicio and @fechaHasta<=via_fecha_fin)
      )
 GO
 
@@ -815,78 +815,5 @@ AS
     usu_mail = @Email,
     usu_fecha_nacimiento = @FechaNac
    WHERE usu_id = @usuarioId
-  END
-GO
-
--- ABM Turnos
-CREATE PROCEDURE OSNR.BuscarTurnos
-@descripcion varchar(255)
-AS
- SELECT
-  tur_id 'Nro. Turno',
-  tur_descripcion 'Descripcion',
-  tur_hora_inicio 'Hora Inicio',
-  tur_hora_fin 'Hora Fin',
-  tur_valor_km 'Valor Km',
-  tur_precio_base 'Precio Base',
-  tur_habilitado 'Habilitado'
- FROM OSNR.Turno 
- WHERE
-  tur_descripcion LIKE '%'+ISNULL(@descripcion, '')+'%' 
- ORDER BY tur_id
-GO
-
-CREATE PROCEDURE OSNR.DeshabilitarTurno
-@turnoId numeric(18, 0)
-AS
- UPDATE OSNR.Turno
- SET tur_habilitado = 0 
- WHERE tur_id = @turnoId
-GO
-
-CREATE PROCEDURE OSNR.HabilitarTurno
-@turnoId numeric(18, 0)
-AS
- UPDATE OSNR.Turno
- SET tur_habilitado = 1 
- WHERE tur_id = @turnoId
-GO
-
-CREATE PROCEDURE OSNR.ModificarOCrearTurno
-@turnoId numeric(18, 0) = NULL,
-@descripcion varchar(255), @horaInicio numeric(18, 0), @horaFin numeric(18,0),
-@valorKm numeric(18, 2), @precioBase numeric(18,2)
-AS
- IF (@turnoId IS NULL) 
-  BEGIN
-   INSERT INTO OSNR.Turno 
-   (
-	tur_descripcion,
-	tur_hora_inicio,
-	tur_hora_fin,
-	tur_valor_km,
-	tur_precio_base
-   ) 
-   VALUES (
-    @descripcion,
-	@horaInicio,
-	@horaFin,
-	@valorKm,
-	@precioBase 
-   )
-
-   SET @turnoId = @@IDENTITY
-   INSERT INTO OSNR.Turno (tur_id) VALUES (@turnoId)
-  END
- ELSE
-  BEGIN
-   UPDATE OSNR.Turno 
-   SET
-	tur_descripcion = @descripcion,
-	tur_hora_inicio = @horaInicio,
-	tur_hora_fin = @horaFin,
-	tur_valor_km = @valorKm,
-	tur_precio_base = @precioBase 
-   WHERE tur_id = @turnoId
   END
 GO
