@@ -61,9 +61,9 @@ namespace UberFrba.Mappings
             return new SpExec(this, spName, fields, errorMensaje, ejecucionCorrecta).ExecAndGetDataTable();
         }
 
-        public void ExecSP(String spName, Dictionary<String, DbTypedValue> fields = null, Dictionary<int, String> errorMensaje = null, String ejecucionCorrecta = null)
+        public SpExec ExecSP(String spName, Dictionary<String, DbTypedValue> fields = null, Dictionary<int, String> errorMensaje = null, String ejecucionCorrecta = null)
         {
-            new SpExec(this, spName, fields, errorMensaje, ejecucionCorrecta).Exec();
+            return new SpExec(this, spName, fields, errorMensaje, ejecucionCorrecta).Exec();
         }
     }
 }
