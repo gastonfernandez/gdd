@@ -17,7 +17,7 @@ namespace UberFrba.Abm_Chofer
         Validacion v = new Validacion();
         SqlConnection conexion;
         String ChoferId = null;
-        List<EditarChofer> afiliadosChoferes = new List<EditarChofer>();
+        List<EditarChofer> choferesAsociados = new List<EditarChofer>();
 
         public EditarChofer()
         {

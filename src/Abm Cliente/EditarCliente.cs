@@ -17,7 +17,7 @@ namespace UberFrba.Abm_Cliente
         Validacion v = new Validacion();
         SqlConnection conexion;
         String clienteId = null;
-        List<FormEditarCliente> afiliadosClientes = new List<FormEditarCliente>();
+        List<FormEditarCliente> clientesAsociados = new List<FormEditarCliente>();
 
         public FormEditarCliente()
         {
@@ -40,11 +40,6 @@ namespace UberFrba.Abm_Cliente
             SqlDataAdapter adapter = new SqlDataAdapter();
             adapter.SelectCommand = listar;
             adapter.Fill(tabla);
-
-            //txtNombre.Enabled = false;
-            //txtApellido.Enabled = false;
-            //txtDocumento.Enabled = false;
-            //dtpNacimiento.Enabled = false;
             
             txtNombre.Text = tabla.Rows[0]["usu_nombre"].ToString();
             txtApellido.Text = tabla.Rows[0]["usu_apellido"].ToString();
