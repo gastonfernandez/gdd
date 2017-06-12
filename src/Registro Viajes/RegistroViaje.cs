@@ -170,15 +170,16 @@ namespace UberFrba.Registro_Viajes
 
                     #region ValidarCliente con viaje registrado en fecha y hora (chofer tambien)
 
-                    
+
                     Dictionary<String, DbTypedValue> camposchofer = new Dictionary<string, DbTypedValue>();
                     camposchofer.Add("idChofer", new DbTypedValue(idChofer.ToString(), SqlDbType.BigInt));
-                    camposchofer.Add("fechaDesde", new DbTypedValue(fechaDesde.ToString(), SqlDbType.DateTime));
-                    camposchofer.Add("fechaHasta", new DbTypedValue(fechaHasta.ToString(), SqlDbType.DateTime));
+                    camposchofer.Add("fechaDesde", new DbTypedValue(fechaDesde, SqlDbType.DateTime));
+                    camposchofer.Add("fechaHasta", new DbTypedValue(fechaHasta, SqlDbType.DateTime));
                     Dictionary<int, String> errormsgcho = new Dictionary<int, string>();
                     DataGridView rtaChofer = new DataGridView();
-                    rtaChofer.DataSource =new BaseDeDatos().ExecSPAndGetData("OSNR.BuscarViajesChofer", camposchofer, errormsgcho);
+                    rtaChofer.DataSource = new BaseDeDatos().ExecSPAndGetData("OSNR.BuscarViajesChofer", camposchofer, errormsgcho);
 
+                   
                     //no esta funcionando el sp hay que validarlo
                     if (rtaChofer.RowCount != 0)
                         throw new Exception("No es posible cargar un viaje para el chofer ya que dispone uno cargado");
@@ -210,6 +211,8 @@ namespace UberFrba.Registro_Viajes
 
                     Dictionary<int, String> errormsg = new Dictionary<int, string>();
                     new BaseDeDatos().ExecSP("OSNR.RegistrarViaje", campos, errormsg);
+                    if (errormsg.Count == 0)
+                        MessageBox.Show("El viaje ha sido registrado correctamente");
                     #endregion
                 }
                 else

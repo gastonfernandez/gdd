@@ -719,8 +719,8 @@ AS
 select * 
 from OSNR.Viaje
 where via_id_chofer=@idChofer
-and  ( (@fechaDesde between via_fecha_inicio and via_fecha_fin)
-		or (@fechaHasta between via_fecha_inicio and via_fecha_fin)
+and  ( (@fechaDesde>=  via_fecha_inicio and  @fechaDesde<=via_fecha_fin)
+		or (@fechaHasta >= via_fecha_inicio and @fechaHasta<=via_fecha_fin)
      )
 GO
 

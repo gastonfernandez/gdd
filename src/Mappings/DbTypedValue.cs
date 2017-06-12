@@ -9,7 +9,7 @@ namespace UberFrba.Mappings
 {
     public class DbTypedValue
     {
-        private String value;
+        private Object value;
         private SqlDbType type;
 
         public DbTypedValue(object valor, SqlDbType type)
@@ -18,13 +18,20 @@ namespace UberFrba.Mappings
             this.type = type;
         }
 
+        public DbTypedValue(DateTime valor, SqlDbType type)
+        {
+            this.value = valor;
+            this.type = type;
+        }
+
+
         public DbTypedValue(String value, SqlDbType type)
         {
             this.value = value;
             this.type = type;
         }
 
-        public String getValue()
+        public Object getValue()
         {
             return value;
         }
