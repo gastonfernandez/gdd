@@ -288,7 +288,7 @@ INSERT INTO OSNR.Rol (rol_nombre) values ('Cliente')		/* ID 2 */
 INSERT INTO OSNR.Rol (rol_nombre) values ('Chofer')			/* ID 3 */
 
 INSERT INTO OSNR.Usuario (usu_nombre, usu_apellido, usu_dni, usu_direccion, usu_telefono, usu_fecha_nacimiento, usu_login, usu_password)
-	values ('Administrador', 'OSNR', '11111', 'En la esquina, a la vuelta', '34346557634987', GETDATE(), 'admin', HASHBYTES('SHA2_256', 'w23e'))
+	values ('Administrador General', 'OSNR', '11111', 'En la esquina, a la vuelta', '34346557634987', GETDATE(), 'admin', HASHBYTES('SHA2_256', 'w23e'))
 GO
 INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
 	values(1, 1)
