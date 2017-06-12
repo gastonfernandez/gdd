@@ -225,6 +225,7 @@
             this.dtFechaDesde.Name = "dtFechaDesde";
             this.dtFechaDesde.Size = new System.Drawing.Size(200, 20);
             this.dtFechaDesde.TabIndex = 34;
+            this.dtFechaDesde.Value = Config.fecha;
             // 
             // dtFechaHasta
             // 
@@ -234,6 +235,7 @@
             this.dtFechaHasta.Name = "dtFechaHasta";
             this.dtFechaHasta.Size = new System.Drawing.Size(200, 20);
             this.dtFechaHasta.TabIndex = 35;
+            this.dtFechaHasta.Value = Config.fecha;
             // 
             // tbKM
             // 
@@ -281,9 +283,6 @@
             this.btRegistrar.UseVisualStyleBackColor = false;
             this.btRegistrar.Click += new System.EventHandler(this.button3_Click);
             // 
-            // shapeContainer1
-            // 
-            // 
             // label4
             // 
             this.label4.AutoSize = true;
@@ -326,7 +325,6 @@
             this.Controls.Add(this.tbNombre);
             this.Name = "RegistroViaje";
             this.Text = "Registro Viajes";
-            this.Load += new System.EventHandler(this.RegistroViaje_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvChofer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCliente)).EndInit();
             this.ResumeLayout(false);

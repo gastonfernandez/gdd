@@ -23,13 +23,6 @@ namespace UberFrba.Registro_Viajes
         }
         private SqlConnection conexion = new SqlConnection(Config.strConnection);
 
-
-        private void RegistroViaje_Load(object sender, EventArgs e)
-        {
-         
-
-        }
-
         private void tbTelefonoCliente_TextChanged(object sender, EventArgs e)
         {
 
@@ -135,7 +128,7 @@ namespace UberFrba.Registro_Viajes
                 fechaDesde = dtFechaDesde.Value;
                 fechaHasta = dtFechaHasta.Value;
 
-                if (cantKm < 0)
+                if (cantKm <= 0)
                 {
                     throw(new Exception ("la cantidad de km debe ser mayor a 0"));
                 }
@@ -210,8 +203,8 @@ namespace UberFrba.Registro_Viajes
                     campos.Add("cantKm", new DbTypedValue(cantKm.ToString(), SqlDbType.Int));
 
                     Dictionary<int, String> errormsg = new Dictionary<int, string>();
-                    new BaseDeDatos().ExecSP("OSNR.RegistrarViaje", campos, errormsg);
-                    if (errormsg.Count == 0)
+                    errormsg.Add(547, "La cantidad de KM debe ser mayor a 0");
+                    if (!new BaseDeDatos().ExecSP("OSNR.RegistrarViaje", campos, errormsg).huboError()) 
                         MessageBox.Show("El viaje ha sido registrado correctamente");
                     #endregion
                 }
@@ -226,11 +219,6 @@ namespace UberFrba.Registro_Viajes
 
 
         }
-
-       
-        
-
-
 
     }
 }

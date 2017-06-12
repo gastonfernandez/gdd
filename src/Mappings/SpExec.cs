@@ -81,7 +81,7 @@ namespace UberFrba.Mappings
                 MessageBox.Show(msgEjecucionCorrecta);
         }
 
-        public void Exec()
+        public SpExec Exec()
         {
             db.openConnection();
             using (var cmd = new SqlCommand(spName, db.conexion))
@@ -104,6 +104,7 @@ namespace UberFrba.Mappings
             }
 
             db.closeConnection();
+            return this;
         }
 
         public DataTable ExecAndGetDataTable()

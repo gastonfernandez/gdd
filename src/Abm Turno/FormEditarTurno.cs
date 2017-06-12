@@ -53,28 +53,21 @@ namespace UberFrba.Abm_Turno
         {
             if (camposCompletos())
             {
-                if (seSuperponenHoras())
-                {
-                    MessageBox.Show("El horario del turno se superpone con uno de un turno ya existente");
-                }
                 if (masDe24Horas())
                 {
                     MessageBox.Show("El horario del turno no puede durar mas de 24 horas");
+                    return;
                 }
                 else
                 {
                     this.DialogResult = DialogResult.OK;
-                    guardarDatos();
-                    MessageBox.Show("Datos guardados correctamente!");
-                    this.Close();
+                    if (guardarDatos())
+                    {
+                        MessageBox.Show("Datos guardados correctamente!");
+                        this.Close();
+                    }
                 }
             }
-        }
-
-        private bool seSuperponenHoras()
-        {
-            //TODO
-            return false;
         }
 
         private bool masDe24Horas()
@@ -100,19 +93,20 @@ namespace UberFrba.Abm_Turno
             }
             return true;
         }
-        
-        private void guardarDatos()
+
+        private Boolean guardarDatos()
         {
             Dictionary<String, DbTypedValue> campos = new Dictionary<String, DbTypedValue>();
-            campos.Add("TurnoId", new DbTypedValue(TurnoId, SqlDbType.Decimal));
-            campos.Add("Descripcion", new DbTypedValue(txtDescripcion.Text, SqlDbType.VarChar));
-            campos.Add("Hora Inicio", new DbTypedValue(txtInicio.Text, SqlDbType.Decimal));
-            campos.Add("Hora Fin", new DbTypedValue(txtFin.Text, SqlDbType.Decimal));
-            campos.Add("Valor Km", new DbTypedValue(txtValorKm.Text, SqlDbType.Decimal));
-            campos.Add("Precio Base", new DbTypedValue(txtBase.Text, SqlDbType.Decimal));
-            
+            campos.Add("turnoId", new DbTypedValue(TurnoId, SqlDbType.Decimal));
+            campos.Add("descripcion", new DbTypedValue(txtDescripcion.Text, SqlDbType.VarChar));
+            campos.Add("horaInicio", new DbTypedValue(txtInicio.Text, SqlDbType.Decimal));
+            campos.Add("horaFin", new DbTypedValue(txtFin.Text, SqlDbType.Decimal));
+            campos.Add("valorKm", new DbTypedValue(txtValorKm.Text, SqlDbType.Decimal));
+            campos.Add("precioBase", new DbTypedValue(txtBase.Text, SqlDbType.Decimal));
+
             Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
-            new BaseDeDatos().ExecSP("OSNR.ModificarOCrearTurno", campos, errorMensaje);
+            errorMensaje.Add(547, "Las horas se superponen con otro turno existente.");
+            return !new BaseDeDatos().ExecSP("OSNR.ModificarOCrearTurno", campos, errorMensaje).huboError();
         }
 
         private bool camposCompletos()
@@ -170,7 +164,8 @@ namespace UberFrba.Abm_Turno
 
         private bool esNumerico(String cadena)
         {
-            return System.Text.RegularExpressions.Regex.IsMatch(cadena, @"^\d+$");
+
+            return System.Text.RegularExpressions.Regex.IsMatch(cadena, @"^[0-9]+(\,\d+?)?$");
         }
 
         private void txtInicio_KeyPress(object sender, KeyPressEventArgs e)

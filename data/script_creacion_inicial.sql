@@ -10,7 +10,31 @@ DECLARE @names_tables varchar(max)
 DECLARE @names_types varchar(max)
 DECLARE @names_triggers varchar(max)
 
+DECLARE @table_name varchar(max)
+DECLARE @fk_name varchar(max)
+
 DECLARE @sql varchar(max)
+
+-- Borro las check constraints
+DECLARE tables_in_schema_for_checks CURSOR FOR 
+SELECT f.name, Object_NAME(f.parent_object_id)
+FROM sys.check_constraints AS f JOIN
+sys.schemas AS s ON s.schema_id = f.schema_id
+WHERE s.name = 'OSNR'
+
+
+OPEN tables_in_schema_for_checks 
+FETCH tables_in_schema_for_checks INTO  @fk_name, @table_name
+
+WHILE (@@FETCH_STATUS = 0) 
+BEGIN 
+	SET @sql = 'ALTER TABLE OSNR.' + @table_name + ' DROP CONSTRAINT ' + @fk_name
+	EXEC(@sql)
+	FETCH tables_in_schema_for_checks INTO  @fk_name, @table_name
+END 
+
+CLOSE tables_in_schema_for_checks 
+DEALLOCATE tables_in_schema_for_checks
 
 --Borro los triggers
 SELECT @names_triggers = coalesce(@names_triggers + ', ','') + '[OSNR].' + t.NAME
@@ -45,25 +69,19 @@ SET @sql = 'DROP VIEW ' + @names_veiws
 EXEC(@sql)
 
 -- Deshabilito la integridad referencial de las tablas a borrar
-	
 DECLARE tables_in_schema CURSOR FOR 
 SELECT f.name, Object_NAME(f.parent_object_id)
 FROM sys.foreign_keys AS f JOIN
 sys.schemas AS s ON s.schema_id = f.schema_id
 WHERE s.name = 'OSNR'
 
-DECLARE @table_name varchar(max)
-DECLARE @fk_name varchar(max)
-
 OPEN tables_in_schema 
-
 FETCH tables_in_schema INTO  @fk_name, @table_name
 
 WHILE (@@FETCH_STATUS = 0) 
 BEGIN 
 	SET @sql = 'ALTER TABLE OSNR.' + @table_name + ' DROP CONSTRAINT ' + @fk_name
 	EXEC(@sql)
-
 	FETCH tables_in_schema INTO  @fk_name, @table_name
 END 
 
@@ -191,7 +209,7 @@ GO
 
 CREATE TABLE OSNR.Viaje (
 	via_id int IDENTITY(1,1) PRIMARY KEY,
-	via_cantidad_km int NOT NULL,
+	via_cantidad_km int NOT NULL CHECK (via_cantidad_km > 0), -- Los viajes deben si o si tener KM mayor a 0
 	via_fecha_inicio datetime NOT NULL,
 	via_fecha_fin datetime NOT NULL,
 	via_id_chofer int REFERENCES OSNR.Chofer NOT NULL,
@@ -270,14 +288,14 @@ INSERT INTO OSNR.Rol (rol_nombre) values ('Cliente')		/* ID 2 */
 INSERT INTO OSNR.Rol (rol_nombre) values ('Chofer')			/* ID 3 */
 
 INSERT INTO OSNR.Usuario (usu_nombre, usu_apellido, usu_dni, usu_direccion, usu_telefono, usu_fecha_nacimiento, usu_login, usu_password)
-	values ('Administrador', 'OSNR', '11111', 'En la esquina, a la vuelta', '34346557634987', GETDATE(), 'admin', HASHBYTES('SHA2_256', 'w23e'))
+	values ('Administrador General', 'OSNR', '11111', 'En la esquina, a la vuelta', '34346557634987', GETDATE(), 'admin', HASHBYTES('SHA2_256', 'w23e'))
 GO
 INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
 	values(1, 1)
-GO
-
 INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
 	values(1, 2)
+INSERT INTO OSNR.UsuarioRol(usurol_id_usuario, usurol_id_rol)
+	values(1, 3)
 
 /* Agregamos las funcionalidades.. */
 INSERT INTO OSNR.Funcionalidad (fun_nombre) values ('ABM Rol')
@@ -304,7 +322,7 @@ INSERT INTO OSNR.FuncionalidadRol values (1,8) -- Facturacion de Cliente
 INSERT INTO OSNR.FuncionalidadRol values (1,9) -- Listados Estadistico
 
 -- Cliente
---INSERT INTO OSNR.FuncionalidadRol values (2,6) -- QUE BOSTA PUEDE HACER EL CLIENTE???
+INSERT INTO OSNR.FuncionalidadRol values (2,6) -- Registro de Viaje
 
 
 -- Chofer
@@ -1103,3 +1121,35 @@ AS
 			CAST(fac_fecha_fin AS DATE) = @fechaFin AND
 			@idCliente=fac_id_cliente
 GO
+
+
+/*****************************************************************/
+/*************************** Functions ***************************/
+/*****************************************************************/
+
+-- Validacion de overlap en turnos
+CREATE FUNCTION OSNR.CheckTurnoOverlap(
+@HoraInicio numeric(18, 2),
+@HoraFin numeric(18, 2),
+@IdTurno int)
+RETURNS BIT 
+AS
+BEGIN
+	DECLARE @retval BIT
+  
+	IF EXISTS (
+		SELECT	*
+		FROM	OSNR.Turno
+		WHERE		
+				@IdTurno <> tur_id
+				AND ((@HoraInicio >= tur_hora_inicio AND @HoraInicio < tur_hora_fin) OR (@HoraFin > tur_hora_inicio AND @HoraFin <= tur_hora_fin))
+		)
+		BEGIN
+			RETURN 1
+		END
+
+	RETURN 0
+END
+GO
+
+ALTER TABLE OSNR.Turno WITH CHECK ADD CONSTRAINT CK_HorarioTurno CHECK (OSNR.CheckTurnoOverlap(tur_hora_inicio, tur_hora_fin, tur_id)<>1)

@@ -159,12 +159,10 @@ namespace UberFrba.Mappings
 
         public static List<Rol> recuperarRoles()
         {
-            List<Rol> rolesUsuario = new List<Rol>();
+            List<Rol> roles = new List<Rol>();
 
             BaseDeDatos db = new BaseDeDatos();
-
-            DataTable dt = db.select_query("  select r.rol_id rol_id,rol_nombre,rol_habilitado from    OSNR.Usuario u	join OSNR.UsuarioRol ur on ur.usurol_id_usuario=u.usu_id join OSNR.Rol r on ur.usurol_id_rol=r.rol_id ");
-
+            DataTable dt = db.select_query("select rol_id,rol_nombre,rol_habilitado from OSNR.Rol");
 
             foreach (DataRow row in dt.Rows)
             {
@@ -172,13 +170,10 @@ namespace UberFrba.Mappings
                 rol.rolId = Convert.ToInt32(row["rol_id"]);
                 rol.nombre = Convert.ToString(row["rol_nombre"]);
                 rol.habilitado = Convert.ToBoolean(row["rol_habilitado"]);
-
-
-                rolesUsuario.Add(rol);
+                roles.Add(rol);
             }
 
-            return rolesUsuario;
-
+            return roles;
         }
 
     }

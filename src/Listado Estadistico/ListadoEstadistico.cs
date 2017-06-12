@@ -23,7 +23,7 @@ namespace UberFrba.Listado_Estadistico
             var yearList = Enumerable.Range(DateTime.Today.Year - 15, 20).ToList();
             yearList.Reverse();
             comboBoxAño.DataSource = yearList;
-            comboBoxAño.SelectedIndex = 2;
+            comboBoxAño.SelectedIndex = 6;
 
             mapIndicesNombresSP.Add(0, "[OSNR].TOP5ChoferesConMayorRecaudacion");
             mapIndicesNombresSP.Add(1, "[OSNR].TOP5ChoferesConViajeMasLargo");
