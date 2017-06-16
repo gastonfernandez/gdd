@@ -58,14 +58,12 @@ namespace UberFrba.Abm_Turno
                     MessageBox.Show("El horario del turno no puede durar mas de 24 horas");
                     return;
                 }
-                else
+
+                if (guardarDatos())
                 {
                     this.DialogResult = DialogResult.OK;
-                    if (guardarDatos())
-                    {
-                        MessageBox.Show("Datos guardados correctamente!");
-                        this.Close();
-                    }
+                    MessageBox.Show("Datos guardados correctamente!");
+                    this.Close();
                 }
             }
         }

@@ -20,6 +20,7 @@ namespace UberFrba.Rendicion_Viajes
         public RendicionViaje()
         {
             InitializeComponent();
+            button2.Enabled = false;
         }
 
         private void RendicionViaje_Load(object sender, EventArgs e)
@@ -34,22 +35,36 @@ namespace UberFrba.Rendicion_Viajes
 
         private void btn1_Click(object sender, EventArgs e)
         {
-            if (this.txtChofer.Text == null || txtChofer.Text == "")
-            {
-                MessageBox.Show("Falta ID Chofer");
-                return;
-            }
-            Dictionary<String, DbTypedValue> campos = new Dictionary<String, DbTypedValue>();
-            campos.Add("fecha", new DbTypedValue(this.dtpFecha.Value.ToString("yyyy-MM-dd"), SqlDbType.Date));
-            campos.Add("idTurno", new DbTypedValue(this.comboTurnos.SelectedValue.ToString(), SqlDbType.Decimal));
-            campos.Add("idChofer", new DbTypedValue(this.txtChofer.Text, SqlDbType.Decimal));
-            campos.Add("porcentaje", new DbTypedValue(porcentaje.ToString(), SqlDbType.Decimal));
+            Dictionary<String, DbTypedValue> campos = getCampos();
+            if (campos == null) return;
+
+            Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
+            SpExec sp = new SpExec(new BaseDeDatos(), "OSNR.PrevisualizarViajesRendicion", campos, errorMensaje, null);
+            dataGridView4.DataSource = sp.ExecAndGetDataTable();
+            button2.Enabled = !sp.huboError();
+        }
+
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            AbmChofer busquedaChofer = new AbmChofer(true);
+            busquedaChofer.ShowDialog();
+            this.txtChofer.Text = busquedaChofer.idChoferSeleccionado;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Dictionary<String, DbTypedValue> campos = getCampos();
+            if (campos == null) return;
 
             Dictionary<int, String> errorMensaje = new Dictionary<int, string>();
             SpExec sp = new SpExec(new BaseDeDatos(), "OSNR.CrearRendicion", campos, errorMensaje, null);
             dataGridView1.DataSource = sp.ExecAndGetDataTable();
             if (!sp.huboError())
+            {
                 cargarDatosRendicion();
+                button2.Enabled = false;
+            }
             else
                 dataGridView2.DataSource = null;
         }
@@ -65,11 +80,19 @@ namespace UberFrba.Rendicion_Viajes
             dataGridView2.DataSource = new BaseDeDatos().ExecSPAndGetData("OSNR.ObtenerRendicion", campos, errorMensaje);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private Dictionary<String, DbTypedValue> getCampos()
         {
-            AbmChofer busquedaChofer = new AbmChofer(true);
-            busquedaChofer.ShowDialog();
-            this.txtChofer.Text = busquedaChofer.idChoferSeleccionado;
+            if (this.txtChofer.Text == null || txtChofer.Text == "")
+            {
+                MessageBox.Show("Falta ID Chofer");
+                return null;
+            }
+            Dictionary<String, DbTypedValue> campos = new Dictionary<String, DbTypedValue>();
+            campos.Add("fecha", new DbTypedValue(this.dtpFecha.Value.ToString("yyyy-MM-dd"), SqlDbType.Date));
+            campos.Add("idTurno", new DbTypedValue(this.comboTurnos.SelectedValue.ToString(), SqlDbType.Decimal));
+            campos.Add("idChofer", new DbTypedValue(this.txtChofer.Text, SqlDbType.Decimal));
+            campos.Add("porcentaje", new DbTypedValue(porcentaje.ToString(), SqlDbType.Decimal));
+            return campos;
         }
     }
 }

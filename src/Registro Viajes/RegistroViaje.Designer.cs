@@ -169,7 +169,6 @@
             this.tbApellidoCliente.Name = "tbApellidoCliente";
             this.tbApellidoCliente.Size = new System.Drawing.Size(176, 20);
             this.tbApellidoCliente.TabIndex = 23;
-            this.tbApellidoCliente.TextChanged += new System.EventHandler(this.tbApellidoCliente_TextChanged);
             // 
             // tbDniCliente
             // 
@@ -225,7 +224,6 @@
             this.dtFechaDesde.Name = "dtFechaDesde";
             this.dtFechaDesde.Size = new System.Drawing.Size(200, 20);
             this.dtFechaDesde.TabIndex = 34;
-            this.dtFechaDesde.Value = Config.fecha;
             // 
             // dtFechaHasta
             // 
@@ -235,7 +233,6 @@
             this.dtFechaHasta.Name = "dtFechaHasta";
             this.dtFechaHasta.Size = new System.Drawing.Size(200, 20);
             this.dtFechaHasta.TabIndex = 35;
-            this.dtFechaHasta.Value = Config.fecha;
             // 
             // tbKM
             // 
@@ -325,6 +322,7 @@
             this.Controls.Add(this.tbNombre);
             this.Name = "RegistroViaje";
             this.Text = "Registro Viajes";
+            this.Load += new System.EventHandler(this.RegistroViaje_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvChofer)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCliente)).EndInit();
             this.ResumeLayout(false);

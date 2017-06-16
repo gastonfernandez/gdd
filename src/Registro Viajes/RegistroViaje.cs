@@ -17,21 +17,12 @@ namespace UberFrba.Registro_Viajes
     {
         
         Validacion v = new Validacion();
+
         public RegistroViaje()
         {
             InitializeComponent();
         }
         private SqlConnection conexion = new SqlConnection(Config.strConnection);
-
-        private void tbTelefonoCliente_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tbApellidoCliente_TextChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void btCargarChofer_Click(object sender, EventArgs e)
         {
@@ -43,7 +34,7 @@ namespace UberFrba.Registro_Viajes
             conexion.Open();
 
             SqlDataAdapter daClientes = new SqlDataAdapter("select top 10 u.usu_dni as ChoferDni, u.usu_nombre as ChoferNombre, u.usu_apellido as ChoferApellido, u.usu_direccion as ChoferDireccion, u.usu_telefono as ChoferTelefono, u.usu_fecha_nacimiento as ChoferFechaNac ,	mar.mar_nombre as Marca,			m.mod_nombre as Modelo,			v.veh_patente as Patente,			t.tur_descripcion as Turno,			c.cho_id as id_chofer,			v.veh_id as id_vehiculo,			t.tur_id as id_turno  "+
-	  " from OSNR.Usuario u	join OSNR.Chofer c on c.cho_id_usuario=u.usu_id "+
+	            " from OSNR.Usuario u	join OSNR.Chofer c on c.cho_id_usuario=u.usu_id "+
                 " Join OSNR.Vehiculo v on v.veh_id_chofer = c.cho_id"+
 		        " join OSNR.VehiculoTurno vt on vt.auttur_id_vehiculo=v.veh_id"+
 		        " join OSNR.Turno t on t.tur_id=vt.auttur_id_turno"+
@@ -82,9 +73,6 @@ namespace UberFrba.Registro_Viajes
             conexion.Close();
 
         }
-
-      
-        
 
         private void tbKM_KeyPress_1(object sender, KeyPressEventArgs e)
         {
@@ -203,7 +191,7 @@ namespace UberFrba.Registro_Viajes
                     campos.Add("cantKm", new DbTypedValue(cantKm.ToString(), SqlDbType.Int));
 
                     Dictionary<int, String> errormsg = new Dictionary<int, string>();
-                    errormsg.Add(547, "La cantidad de KM debe ser mayor a 0");
+                    errormsg.Add(547, "Las fecha del viaje no son validas. La fecha y hora de inicio debe ser menor que la fecha y hora de finalizacion");
                     if (!new BaseDeDatos().ExecSP("OSNR.RegistrarViaje", campos, errormsg).huboError()) 
                         MessageBox.Show("El viaje ha sido registrado correctamente");
                     #endregion
@@ -217,7 +205,12 @@ namespace UberFrba.Registro_Viajes
                 MessageBox.Show(ex.Message);
             }
 
+        }
 
+        private void RegistroViaje_Load(object sender, EventArgs e)
+        {
+            this.dtFechaDesde.Value = Config.fecha;
+            this.dtFechaHasta.Value = Config.fecha;
         }
 
     }
